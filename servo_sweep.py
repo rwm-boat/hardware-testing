@@ -15,15 +15,6 @@ time.sleep(.25)
 
 bus.write_word_data(addr, 0x06, 0) # ch1 startaddress
 
-servo_to_degrees(0x06, 0x08, 25)
-time.sleep(.20)
-
-servo_to_degrees(0x06, 0x08, 45)
-time.sleep(.20)
-
-servo_to_degrees(0x06, 0x08, 90)
-time.sleep(.20)
-
 def servo_to_degrees(servo_start, servo_end, degrees):
     ms_degree = 1250/360
     servo_time = ms_degree * degrees
@@ -32,3 +23,13 @@ def servo_to_degrees(servo_start, servo_end, degrees):
     time.sleep(.20)
     bus.write_word_data(addr, servo_start, 0)
     print(degree + " : " + servo_time)
+
+
+servo_to_degrees(0x06, 0x08, 25)
+time.sleep(.20)
+
+servo_to_degrees(0x06, 0x08, 45)
+time.sleep(.20)
+
+servo_to_degrees(0x06, 0x08, 90)
+time.sleep(.20)
