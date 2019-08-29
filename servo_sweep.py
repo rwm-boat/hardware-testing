@@ -13,6 +13,7 @@ bus.write_byte_data(addr, 0xfe, 0x79) #changes the prescale register to 50Hz
 bus.write_byte_data(addr, 0, 0x20) # enables the chip
 time.sleep(.25)
 
+# comment
 
 bus.write_word_data(addr, 0x06, 0) # ch1 startaddress
 
