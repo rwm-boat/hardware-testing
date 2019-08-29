@@ -23,7 +23,7 @@ for x in range(125):
     bus.write_word_data(addr, 0x08, x*10) # ch1 end adress
     time.sleep(.10)
     bus.write_word_data(addr, 0x06, 0)
-    print("loop");
+    print("loop")
 for x in range(125):
 
     bus.write_word_data(addr, 0x08, x*10)
