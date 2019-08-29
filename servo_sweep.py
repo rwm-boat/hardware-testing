@@ -22,14 +22,14 @@ def servo_to_degrees(servo_start, servo_end, degrees):
     bus.write_word_data(addr, servo_end, servo_time) 
     time.sleep(.20)
     bus.write_word_data(addr, servo_start, 0)
-    print(degree + " : " + servo_time)
+    print(degrees + " : " + servo_time)
 
 
-servo_to_degrees(0x06, 0x08, 25)
+servo_to_degrees('0x06', '0x08', 25)
 time.sleep(.20)
 
-servo_to_degrees(0x06, 0x08, 45)
+servo_to_degrees('0x06', '0x08', 45)
 time.sleep(.20)
 
-servo_to_degrees(0x06, 0x08, 90)
+servo_to_degrees('0x06', '0x08', 90)
 time.sleep(.20)
