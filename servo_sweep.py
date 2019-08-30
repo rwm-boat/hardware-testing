@@ -6,10 +6,21 @@ kit.servo[0].actuation_range = 180
 kit.servo[0].set_pulse_width_range(1000,2000)
 
 
-for x in range(180):
-   kit.servo[0].angle = x
-   time.sleep(.1)
+kit.servo[0].angle = 0
+time.sleep(.1)
+kit.servo[0].angle = 90
+time.sleep(.1)
+kit.servo[0].angle = 180
+time.sleep(.1)
+kit.servo[0].angle = 90
+time.sleep(.1)
+kit.servo[0].angle = 0
+time.sleep(.1)
 
-for x in range(180,0):
-   kit.servo[0].angle = x
-   time.sleep(.1)
+# for x in range(180):
+#    kit.servo[0].angle = x
+#    time.sleep(.1)
+
+# for x in range(180,0):
+#    kit.servo[0].angle = x
+#    time.sleep(.1)
