@@ -24,6 +24,8 @@ def servo_to_degrees(servo_start, servo_end, degrees):
     bus.write_word_data(addr, servo_start, 0)
    # print(degrees + " : " + servo_time)
 
+servo_to_degrees(0x06, 0x08, 0)
+time.sleep(.50)
 
 servo_to_degrees(0x06, 0x08, 25)
 time.sleep(.50)
