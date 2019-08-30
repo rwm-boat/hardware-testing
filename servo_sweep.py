@@ -18,40 +18,20 @@ DIR.set_pulse_width_range(500, 2400) #correct microsecond range for DS3218mg ser
 RB.actuation_range = 180
 RB.set_pulse_width_range(500, 2400) #correct microsecond range for DS3218mg servos
 
+def setup():
+    ESC.angle = 0
+    DIR.angle = 90
+    RB.angle = 0
 
 
-ESC.angle = 0
-DIR.angle = 0
-RB.angle = 0
+def th_rq(mag):
+    vel = abs(mag)
+    vel = (vel*18)/10
+    ESC.angle = vel
+    print("ESC Velocity: " + vel)
 
-time.sleep(3)
 
-DIR.angle = 180
-RB.angle = 180
-
-<<<<<<< HEAD
-ESC.angle = 10
+th_rq(100)
 time.sleep(2)
-ESC.angle = 0
-=======
-time.sleep(3)
-
-ESC.angle = 30
-time.sleep(1)
-ESC.angle = 0
-
-
-#kit.servo[0].angle = 90
-#time.sleep(.25)
-#kit.servo[0].angle = 180
-#time.sleep(.25)
-#kit.servo[0].angle = 90
-#time.sleep(.25)
-#kit.servo[0].angle = 0
-#time.sleep(.25)
-
-# for x in range(180):
-#    kit.servo[0].angle = x
-#    time.sleep(.1)
->>>>>>> e227014dd256811bf8e6b44dcf3f17002c081c77
+th_rq(0)
 
