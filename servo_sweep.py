@@ -29,7 +29,29 @@ time.sleep(3)
 DIR.angle = 180
 RB.angle = 180
 
+<<<<<<< HEAD
 ESC.angle = 10
 time.sleep(2)
 ESC.angle = 0
+=======
+time.sleep(3)
+
+ESC.angle = 30
+time.sleep(1)
+ESC.angle = 0
+
+
+#kit.servo[0].angle = 90
+#time.sleep(.25)
+#kit.servo[0].angle = 180
+#time.sleep(.25)
+#kit.servo[0].angle = 90
+#time.sleep(.25)
+#kit.servo[0].angle = 0
+#time.sleep(.25)
+
+# for x in range(180):
+#    kit.servo[0].angle = x
+#    time.sleep(.1)
+>>>>>>> e227014dd256811bf8e6b44dcf3f17002c081c77
 
