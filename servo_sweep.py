@@ -1,6 +1,7 @@
 from adafruit_servokit import ServoKit
 import time
 kit = ServoKit(channels=16)
+
 ESC = kit.servo[0]
 DIR = kit.servo[1]
 RB = kit.servo[2]
@@ -23,11 +24,14 @@ RB.angle = 0
 
 time.sleep(3)
 
-ESC.angle = 180
 DIR.angle = 180
 RB.angle = 180
 
 time.sleep(3)
+
+ESC.angle = 30
+time.sleep(1)
+ESC.angle = 0
 
 
 #kit.servo[0].angle = 90
