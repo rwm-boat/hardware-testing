@@ -25,13 +25,58 @@ def setup():
 
 
 def th_rq(mag):
-    vel = abs(mag)
-    vel = (vel*18)/10
+
+    if mag > 100:
+        print("Throttle limited to 100")
+
+    if mag < -100:
+        print("Throttle limited to -100")
+
+    vel = ((abs(mag))*18)/10
+
+    if vel <= 10 and vel > 0:
+        vel = 10
+
+    if vel >= 180:
+        vel = 180
+
+#---------------reverse bucket
+    if mag > 0:
+        rb_rq(1)
+
+    if mag < 0:
+        rb_rq(3)
+#------------------------------
+    
     ESC.angle = vel
-    print("ESC Velocity: " + vel)
+    print(vel)
 
 
-th_rq(100)
-time.sleep(2)
-th_rq(0)
+def rb_rq(level): #not set values
+
+    if level = 1: #up
+        RB.angle = 0
+
+    if level = 2: #mid
+        RB.angle = 50
+
+    if level = 3: #down
+        RB.angle = 100
+
+
+def dir_rq(angle): #range is -25 to 25 degrees
+    
+    if angle > 25:
+        angle = 25
+        print("Director limited to 25")
+
+    if angle < -25:
+        angle = -25:
+            print("Director limited to -25")
+
+    servo_angle = 90 + angle
+
+    DIR.angle = servo_angle
+
+
 
