@@ -1,18 +1,35 @@
-#test
-
 from gps import *
 import time
 
 gpsd = gps(mode=WATCH_ENABLE|WATCH_NEWSTYLE)
+
+lat = 0
+lon = 0
+speed = 0
+
+def getCurLat():
+    return lat
+def getCurLon():
+    return lon
+def getCurSpeed():
+    return speed
+
 try:
 
     while True:
         report = gpsd.next()
         if report['class'] == 'TPV':
-            print getattr(report, 'lat', 0.0)
+            lat =  getattr(report, 'lat', 0.0)
+            lon =  getattr(report, 'lon', 0.0)
+            speed =  getattr(speed, 'nan')
+        time.sleep(.2)
 
-        time.sleep(1)
+        print("lat: " + lat)
+        print("lon: " + lon)
+        print("speed: " + speed)
 except (KeyboardInterrupt, SystemExit):
     print "done"
+
+
 
 
