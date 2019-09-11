@@ -24,9 +24,9 @@ try:
             speed =  getattr(speed, 'nan')
         time.sleep(.2)
 
-        print("lat: " + lat)
-        print("lon: " + lon)
-        print("speed: " + speed)
+        print("lat: " + str(lat))
+        print("lon: " + str(lon))
+        print("speed: " + str(speed))
 except (KeyboardInterrupt, SystemExit):
     print "done"
 
