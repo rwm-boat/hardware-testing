@@ -151,9 +151,9 @@ try:
             lat =  getattr(report, 'lat', 0.0)
             lon =  getattr(report, 'lon', 0.0)
             speed =  getattr(report, 'speed', 'nan')
-            az = getattr(report, 'az', 0.0)
-        #if report['class'] == 'SKY':
-
+        if report['class'] == 'SKY':
+            print 'As = Azimuth, degrees from true north'
+            
         time.sleep(.2)
 
         
