@@ -152,7 +152,8 @@ try:
             lon =  getattr(report, 'lon', 0.0)
             speed =  getattr(report, 'speed', 'nan')
         if report['class'] == 'SKY':
-            print 'As = Azimuth, degrees from true north'
+            for i in gpsd.satellites:
+                print 't', i
             
         time.sleep(.2)
 
