@@ -27,7 +27,8 @@ magZmax =  -1086
 
 lat = 0
 lon = 0
-speed = 0
+speed = 0 
+az = 0
 
 
 #Kalman filter variables
@@ -150,6 +151,9 @@ try:
             lat =  getattr(report, 'lat', 0.0)
             lon =  getattr(report, 'lon', 0.0)
             speed =  getattr(report, 'speed', 'nan')
+            az = getattr(az, 'az', 0.0)
+            
+
         time.sleep(.2)
 
         
@@ -271,7 +275,8 @@ try:
         print("lat: " + str(lat))
         print("lon: " + str(lon))
         print("speed: " + str(speed))
-        print("heading" + str(tiltCompensatedHeading))
+        print("heading: " + str(tiltCompensatedHeading))
+        print("gps heading: " + str(az))
             
 
 except (KeyboardInterrupt, SystemExit):
