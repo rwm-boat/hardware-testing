@@ -151,14 +151,10 @@ try:
             lat =  getattr(report, 'lat', 0.0)
             lon =  getattr(report, 'lon', 0.0)
             speed =  getattr(report, 'speed', 'nan')
-        if report['class'] == 'SKY':
-            for i in gpsd.satellites:
-                print 't', i
-            
+                    
         time.sleep(.2)
 
         
-
          #Read the accelerometer,gyroscope and magnetometer values
         ACCx = IMU.readACCx()
         ACCy = IMU.readACCy()
@@ -276,8 +272,8 @@ try:
         print("lat: " + str(lat))
         print("lon: " + str(lon))
         print("speed: " + str(speed))
-        print("heading: " + str(tiltCompensatedHeading))
-        print("gps heading: " + str(az))
+        print("compass heading: " + str(tiltCompensatedHeading))
+        print("gyro heading (z): " + str(gyroZangle))
             
 
 except (KeyboardInterrupt, SystemExit):
