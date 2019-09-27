@@ -27,7 +27,7 @@ while True:
     mag_x, mag_y, mag_z = sensor.magnetic
     gyro_x, gyro_y, gyro_z = sensor.gyro
     temp = sensor.temperature
-    compass = 14 + numpy.degrees(numpy.arctan2(mag_x, mag_y))
+    compass = -(14 + numpy.degrees(numpy.arctan2(mag_x, mag_y)))
     if compass < 0:
         compass = 360 + compass
 
