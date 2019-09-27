@@ -6,6 +6,7 @@ from adafruit_ads1x15.analog_in import AnalogIn
 
 
 ads = ADS.ADS1115(i2c)
+ads.gain(1)
 
 chan = AnalogIn(ads, ADS.P0)
 try:
