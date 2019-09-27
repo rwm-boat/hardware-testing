@@ -8,4 +8,8 @@ from adafruit_ads1x15.analog_in import AnalogIn
 ads = ADS.ADS1115(i2c)
 
 chan = AnalogIn(ads, ADS.P0)
-print(chan.value, chan.voltage)
+try:
+    while True:
+        print(chan.value, chan.voltage)
+except KeyboardInterrupt:
+    print("ended")
