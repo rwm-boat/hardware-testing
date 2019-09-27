@@ -27,11 +27,14 @@ while True:
     mag_x, mag_y, mag_z = sensor.magnetic
     gyro_x, gyro_y, gyro_z = sensor.gyro
     temp = sensor.temperature
-    compass = numpy.arctan2(mag_y, mag_x)
+    compass = 14 + numpy.arctan2(mag_y, mag_x)
+    if compass < 0:
+        compass = 360 + compass
+
     # Print values.
    # print('Acceleration (m/s^2): ({0:0.3f},{1:0.3f},{2:0.3f})'.format(accel_x, accel_y, accel_z))
     print('Magnetometer (gauss): ({0:0.3f},{1:0.3f},{2:0.3f})'.format(mag_x, mag_y, mag_z))
-    print((14 + numpy.degrees(compass))) 
+    print(numpy.degrees(compass))
    # print('Gyroscope (degrees/sec): ({0:0.3f},{1:0.3f},{2:0.3f})'.format(gyro_x, gyro_y, gyro_z))
     print('Temperature: {0:0.3f}C'.format(temp))
     # Delay for a second.
