@@ -1,7 +1,7 @@
 # Simple demo of the LSM9DS0 accelerometer, magnetometer, gyroscope.
 # Will print the acceleration, magnetometer, and gyroscope values every second.
 import time
-
+import numpy
 import board
 import busio
 # import digitalio # Used with SPI
@@ -9,7 +9,7 @@ import busio
 import adafruit_lsm9ds0
 
 # I2C connection:
-i2c = busio.I2C(board.SCL, board.SDA)
+i2c =(busio.I2C(board.SCL, board.SDA))
 sensor = adafruit_lsm9ds0.LSM9DS0_I2C(i2c)
 
 #SPI connection:
@@ -27,10 +27,12 @@ while True:
     mag_x, mag_y, mag_z = sensor.magnetic
     gyro_x, gyro_y, gyro_z = sensor.gyro
     temp = sensor.temperature
+    compass = numpy.arctan2(mag_y, mag_x)
     # Print values.
-    print('Acceleration (m/s^2): ({0:0.3f},{1:0.3f},{2:0.3f})'.format(accel_x, accel_y, accel_z))
+   # print('Acceleration (m/s^2): ({0:0.3f},{1:0.3f},{2:0.3f})'.format(accel_x, accel_y, accel_z))
     print('Magnetometer (gauss): ({0:0.3f},{1:0.3f},{2:0.3f})'.format(mag_x, mag_y, mag_z))
-    print('Gyroscope (degrees/sec): ({0:0.3f},{1:0.3f},{2:0.3f})'.format(gyro_x, gyro_y, gyro_z))
+    print((14 + numpy.degrees(compass))) 
+   # print('Gyroscope (degrees/sec): ({0:0.3f},{1:0.3f},{2:0.3f})'.format(gyro_x, gyro_y, gyro_z))
     print('Temperature: {0:0.3f}C'.format(temp))
     # Delay for a second.
-    time.sleep(1.0)
+    time.sleep(0.5)
