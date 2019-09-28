@@ -26,6 +26,8 @@ while True:  # All data is available via instantiated thread data stream attribu
     }
 
     app_json = json.dump(message)
+    pubber.publish("/status/gps",app_json)
     print(app_json)
+
 
     time.sleep(1) # Sleep, or do other things for as long as you like.
