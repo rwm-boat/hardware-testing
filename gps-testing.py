@@ -5,6 +5,8 @@ import IMU
 import datetime
 import os
 import json
+from mqtt_client.publisher import Publisher
+
 
 gpsd = gps(mode=WATCH_ENABLE|WATCH_NEWSTYLE)
 #another test
@@ -143,6 +145,8 @@ def getCurLon():
     return lon
 def getCurSpeed():
     return speed
+
+pubber = Publisher(client_id="gps-values")
 
 try:
 
@@ -284,6 +288,12 @@ try:
         }
         app_json = json.dumps(message)
         print(app_json)
+
+        pubber.publish("/status/gps",app_json)
+
+
+
+
             
 
 except (KeyboardInterrupt, SystemExit):
