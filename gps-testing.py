@@ -1,4 +1,4 @@
-from gps import *
+from gps3 import *
 import time
 import math
 #import IMU
