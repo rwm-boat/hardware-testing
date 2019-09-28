@@ -4,6 +4,7 @@ import math
 import IMU
 import datetime
 import os
+import json
 
 gpsd = gps(mode=WATCH_ENABLE|WATCH_NEWSTYLE)
 #another test
@@ -269,11 +270,20 @@ try:
                 tiltCompensatedHeading += 360
 
 
-        print("lat: " + str(lat))
-        print("lon: " + str(lon))
-        print("speed: " + str(speed))
-        print("compass heading: " + str(tiltCompensatedHeading))
-        print("gyro heading (z): " + str(gyroZangle))
+        # print("lat: " + str(lat))
+        # print("lon: " + str(lon))
+        # print("speed: " + str(speed))
+        # print("compass heading: " + str(tiltCompensatedHeading))
+        # print("gyro heading (z): " + str(gyroZangle))
+
+        message = {
+            "latitude" : lat,
+            "longitude" : lon,
+            "speed" : speed,
+            "compass heading" : tiltCompensatedHeading
+        }
+        app_json = json.dumps(message)
+        print(app_json)
             
 
 except (KeyboardInterrupt, SystemExit):
