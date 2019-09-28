@@ -25,7 +25,7 @@ while True:  # All data is available via instantiated thread data stream attribu
         'longitude' : agps_thread.data_stream.lon
     }
 
-    app_json = json.dump(message)
+    app_json = json.dumps(message)
     pubber.publish("/status/gps",app_json)
     print(app_json)
 
