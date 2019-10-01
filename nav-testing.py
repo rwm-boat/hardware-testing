@@ -25,7 +25,7 @@ pubber = Publisher(client_id="nav-pubber")
 
 # Begin Curses
 screen = curses.initscr()
-screencompass = None
+screenCompass = 0
 
 
 def publish_gps_status():
@@ -85,9 +85,9 @@ while True:
     publish_compas_status()
 
    
-    screen.addstr(0,14,screenCompass)
+    screen.addstr(0,14,str(screenCompass))
     screen.refresh()
-    c.screen.getch()
+    c = screen.getch()
     curses.endwin()
 
     print("Message")
