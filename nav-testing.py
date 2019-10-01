@@ -9,6 +9,7 @@ import json
 from mqtt_client.publisher import Publisher
 from mqtt_client.subscriber import Subscriber
 from threading import Thread
+import curses
 
 # GPS Setup
 agps_thread = AGPS3mechanism()  # Instantiate AGPS3 Mechanisms
@@ -21,6 +22,11 @@ sensor = adafruit_lsm9ds0.LSM9DS0_I2C(i2c)
 
 # Setup Pubber
 pubber = Publisher(client_id="nav-pubber")
+
+# Begin Curses
+screen = curses.initscr()
+screencompass = None
+
 
 def publish_gps_status():
     message = {
@@ -39,6 +45,7 @@ def publish_compas_status():
     compass = round(-(24 + numpy.degrees(numpy.arctan2(mag_x, mag_y))))
     if compass < 0:
         compass = 360 + compass
+    screencompass = compass
     message = {
         'temp' : temp,
         'compass': compass,
@@ -70,9 +77,20 @@ thread.start()
 
 #subber.listen()
 
+# Telemetry Display
+screen.addstr(0,0,"Mag Heading : ")
 
 while True:
     publish_gps_status()
     publish_compas_status()
+
+   
+    screen.addstr(0,14,screenCompass)
+    screen.refresh()
+    c.screen.getch()
+    curses.endwin()
+
     print("Message")
+
+
     time.sleep(1)
