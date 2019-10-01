@@ -1,7 +1,13 @@
+import board
+import busio
+import adafruit_ads1x15.ads1115 as ADS
+from adafruit_ads1x15.analog_in import AnalogIn
+import time
 import os
 import glob
-import time
- 
+from mqtt_client.publisher import Publisher
+
+# Setup Temp Sensor
 os.system('modprobe w1-gpio')
 os.system('modprobe w1-therm')
  
@@ -9,9 +15,16 @@ base_dir = '/sys/bus/w1/devices/'
 device_folder = glob.glob(base_dir + '28*')[0]
 device_file = device_folder + '/w1_slave'
 
-pubber = Publisher(client_id="temp-values")
+# Setup ADC Sensor
+i2c = busio.I2C(board.SCL, board.SDA)
 
- 
+ads = ADS.ADS1115(i2c)
+ads.gain = 1
+chan = AnalogIn(ads, ADS.P0)
+
+# Setup Pubber
+pubber = Publisher(client_id="jet-pubber")
+
 def read_temp_raw():
     f = open(device_file, 'r')
     lines = f.readlines()
@@ -37,11 +50,17 @@ def publish_temp_status():
         'temp_f': temp_f,
     }
 
-    app_json = json.dumps(message)
-    pubber.publish("/status/temp",app_json)
+def publish_compas_status():
+    message = {
+        'value' : chan.value,
+        'voltage': chan.voltage,
+    }
 
-	
-while True:
-	publish_temp_status()
-	time.sleep(1)
-	
+    app_json = json.dumps(message)
+    pubber.publish("/status/adc",app_json)
+
+while(True):
+    publish_temp_status()
+    publish_adc_status()
+    time.sleep(1)
+

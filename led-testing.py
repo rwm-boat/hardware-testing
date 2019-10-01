@@ -1,25 +1,22 @@
 import RPi.GPIO as GPIO
-import time
 
-try:
-    while True:
+def on_led_command(client, userdata, message):
+    obj = json.loads(message.payload.decode('utf-8'))
+    led_selector = obj['led_id']
+    led_opp = obj['command']
+    try:
         GPIO.setmode(GPIO.BCM)
         GPIO.setwarnings(False)
-
         GPIO.setup(26,GPIO.OUT)
-        GPIO.setup(19,GPIO.OUT)
-        GPIO.setup(13,GPIO.OUT)
-        print ("LED on")
-        GPIO.output(26,GPIO.HIGH)
-        GPIO.output(19,GPIO.HIGH)
-        GPIO.output(13,GPIO.HIGH)
-        time.sleep(2)
-        print ("LED off")
-        GPIO.output(26,GPIO.LOW)
-        GPIO.output(19,GPIO.LOW)
-        GPIO.output(13,GPIO.LOW)
-        time.sleep(2)
-except KeyboardInterrupt:
-    print("ended")
+        GPIO.output(led_selector,GPIO.HIGH)
+    except Exception:
+        print("LED FAILTURE")
 
+
+default_subscriptions = {
+    "/command/led": on_led_command,
+}
+    
+subber = Subscriber(client_id="led_actuator", broker_ip="192.168.1.170", default_subscriptions=default_subscriptions)
+subber.listen()
 
