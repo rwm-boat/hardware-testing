@@ -8,12 +8,12 @@ import glob
 from mqtt_client.publisher import Publisher
 
 # Setup Temp Sensor
-os.system('modprobe w1-gpio')
-os.system('modprobe w1-therm')
+# os.system('modprobe w1-gpio')
+# os.system('modprobe w1-therm')
  
-base_dir = '/sys/bus/w1/devices/'
-device_folder = glob.glob(base_dir + '28*')[0]
-device_file = device_folder + '/w1_slave'
+# base_dir = '/sys/bus/w1/devices/'
+# device_folder = glob.glob(base_dir + '28*')[0]
+# device_file = device_folder + '/w1_slave'
 
 # Setup ADC Sensor
 i2c = busio.I2C(board.SCL, board.SDA)
@@ -61,7 +61,7 @@ def publish_adc_status():
     pubber.publish("/status/adc",app_json)
 
 while(True):
-    publish_temp_status()
+    #publish_temp_status()
     publish_adc_status()
     time.sleep(1)
 
