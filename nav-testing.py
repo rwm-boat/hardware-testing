@@ -7,6 +7,8 @@ import adafruit_lsm9ds0
 import time
 import json
 from mqtt_client.publisher import Publisher
+from mqtt_client.subscriber import Subscriber
+from threading import Thread
 
 # GPS Setup
 agps_thread = AGPS3mechanism()  # Instantiate AGPS3 Mechanisms
@@ -62,10 +64,15 @@ default_subscriptions = {
     "/command/led": on_led_command,
 }
 subber = Subscriber(client_id="led_actuator", broker_ip="192.168.1.170", default_subscriptions=default_subscriptions)
-subber.listen()
+
+thread = Thread(target=subber.listen)
+thread.start()
+
+#subber.listen()
 
 
 while True:
     publish_gps_status()
     publish_compas_status()
+    print("Message")
     time.sleep(1)

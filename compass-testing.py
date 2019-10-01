@@ -2,6 +2,8 @@ import time
 import numpy
 import board
 import busio
+import json
+from mqtt_client.publisher import Publisher
 
 import adafruit_lsm9ds0
 
@@ -20,7 +22,7 @@ def publish_compas_status():
         'temp' : temp,
         'compass': compass,
     }
-
+    print(json.dumps(message))
     app_json = json.dumps(message)
     pubber.publish("/status/compass",app_json)
     
