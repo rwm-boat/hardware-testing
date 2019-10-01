@@ -49,13 +49,14 @@ def publish_temp_status():
         'temp_c' : temp_c,
         'temp_f': temp_f,
     }
+    app_json = json.dumps(message)
+    pubber.publish("/status/temp",app_json)
 
-def publish_compas_status():
+def publish_adc_status():
     message = {
         'value' : chan.value,
         'voltage': chan.voltage,
     }
-
     app_json = json.dumps(message)
     pubber.publish("/status/adc",app_json)
 
