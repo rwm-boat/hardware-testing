@@ -3,6 +3,8 @@ import busio
 import adafruit_ads1x15.ads1115 as ADS
 from adafruit_ads1x15.analog_in import AnalogIn
 import time
+import json
+from mqtt_client.publisher import Publisher
 
 i2c = busio.I2C(board.SCL, board.SDA)
 
@@ -17,7 +19,7 @@ def publish_compas_status():
         'value' : chan.value,
         'voltage': chan.voltage,
     }
-
+    print(json.dumps(message))
     app_json = json.dumps(message)
     pubber.publish("/status/adc",app_json)
     
