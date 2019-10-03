@@ -6,6 +6,7 @@ import time
 import os
 import glob
 from mqtt_client.publisher import Publisher
+import json
 
 # Setup Temp Sensor
 # os.system('modprobe w1-gpio')
@@ -13,7 +14,7 @@ from mqtt_client.publisher import Publisher
  
 # base_dir = '/sys/bus/w1/devices/'
 # device_folder = glob.glob(base_dir + '28*')[0]
-# device_file = device_folder + '/w1_slave'
+# device_file = device_folder + w1_slave'
 
 # Setup ADC Sensor
 i2c = busio.I2C(board.SCL, board.SDA)
@@ -21,7 +22,7 @@ i2c = busio.I2C(board.SCL, board.SDA)
 ads = ADS.ADS1115(i2c)
 ads.gain = 1
 chan = AnalogIn(ads, ADS.P0)
-
+chan2 = AnalogIn(ads,ADS.P1)
 # Setup Pubber
 pubber = Publisher(client_id="jet-pubber")
 
@@ -54,9 +55,10 @@ def publish_temp_status():
 
 def publish_adc_status():
     message = {
-        'value' : chan.value,
+        'voltage2': chan2.voltage,
         'voltage': chan.voltage,
     }
+    print(json.dumps(message))
     app_json = json.dumps(message)
     pubber.publish("/status/adc",app_json)
 
