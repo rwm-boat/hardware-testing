@@ -54,9 +54,13 @@ def publish_temp_status():
     pubber.publish("/status/temp",app_json)
 
 def publish_adc_status():
+
+    jet1_amps = (chan.voltage - 2.47) / 0.013
+    jet2_amps = (chan2.voltage - 2.47) / 0.013
+
     message = {
-        'voltage2': chan2.voltage,
-        'voltage': chan.voltage,
+        'jet1_amps': jet1_amps,
+        'jet2_amps': jet2_amps
     }
     print(json.dumps(message))
     app_json = json.dumps(message)
