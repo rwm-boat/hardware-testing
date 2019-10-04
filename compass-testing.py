@@ -16,6 +16,7 @@ def publish_compas_status():
     mag_x, mag_y, mag_z = sensor.magnetic
     temp = sensor.temperature
     compass = round(-(24 + numpy.degrees(numpy.arctan2(mag_x, mag_y))))
+
     if compass < 0:
         compass = 360 + compass
     message = {
@@ -26,7 +27,16 @@ def publish_compas_status():
     app_json = json.dumps(message)
     pubber.publish("/status/compass",app_json)
     
-
+def publish_accel_status():
+    accel_x, accel_y, accel_z = sensor. acceleration
+    message = {
+        'x_accel' : accel_x,
+        'y_accel' : accel_y,
+        'z_accel' : accel_z
+    }
+    print(json.dumps(message))
+    app_json = json.dumps(message)
+    pubber.publish("status/accel",app_json)
 
 # Main loop will read the acceleration, magnetometer, gyroscope, Temperature
 # values every second and print them out.
@@ -40,4 +50,5 @@ while True:
     # if compass < 0:
     #     compass = 360 + compass
     publish_compas_status()
-    time.sleep(0.25)
+    publish_accel_status()
+    time.sleep(0.1)
