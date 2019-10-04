@@ -14,14 +14,14 @@ def publish_gps_status():
         'time' :  agps_thread.data_stream.time,
         'latitude' : agps_thread.data_stream.lat,
         'longitude' : agps_thread.data_stream.lon,
-        'speed': agps_thread.data_stream.speed,
+        'speed (m/s)' : agps_thread.data_stream.speed,
+        'speed (kn)' : agps_thread.data_stream.speed * 1.943844,
         'course': agps_thread.data_stream.track
     }
 
     app_json = json.dumps(message)
     pubber.publish("/status/gps",app_json)
-
-    time.sleep(1)
+    time.sleep(0.1)
 
 while True:  # All data is available via instantiated thread data stream attribute.
     publish_gps_status()
