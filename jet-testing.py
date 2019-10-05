@@ -8,7 +8,7 @@ import glob
 from mqtt_client.publisher import Publisher
 import json
 
-Setup Temp Sensor
+#Setup Temp Sensor
 os.system('modprobe w1-gpio')
 os.system('modprobe w1-therm')
  
