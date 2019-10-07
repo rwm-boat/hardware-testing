@@ -13,6 +13,10 @@ lat_reading = 0
 lon_reading = 0
 speed_reading = 0
 gps_heading_reading = 0
+jet1_temp = 0
+jet2_temp = 0
+compartment_temp = 0
+gps_distance = 0
 
 jet1_current = 0 #starboard
 jet2_current = 0 #port
@@ -35,15 +39,17 @@ def on_gps_received(client, userdata, message):
     global lon_reading
     global speed_reading
     global gps_heading_reading
+    global gps_distance
     
     obj = json.loads(message.payload.decode('utf-8'))
 
-    # parse json into global variables
+    # parse json into global variablesspeed_reading,
     time_reading = obj["time"]
     lat_reading = obj['latitude']
     lon_reading = obj['longitude']
     speed_reading = obj["speed"]
     gps_heading_reading = obj["course"]
+    gps_distance = obj['distance']
 
 def on_adc_received(client, userdata, message):
     global jet1_current
@@ -52,6 +58,15 @@ def on_adc_received(client, userdata, message):
     obj = json.loads(message.payload.decode('utf-8'))
     jet1_current = obj["jet1_amps"]
     jet2_current = obj["jet2_amps"]
+def on_temp_received(client, userdata, message):
+    global jet1_temp;
+    global jet2_temp;
+    global compartment_temp;
+
+    obj = json.loads(message.payload.decode('utf-8'))
+    jet1_temp = obj["jet1_temp"]
+    jet2_temp = obj["jet2_temp"]
+    compartment_temp = obj["compartment_temp"]
 
 def draw(stdscr):
     # Make stdscr.getch non-blocking
@@ -110,35 +125,48 @@ def draw(stdscr):
         stdscr.addstr(8,0,"GPS Speed(kn): ")
         stdscr.addstr(8, second_column_width, str(round(speed_reading,2)))
 
+        stdscr.addstr(9,0,"GPS distance (NM): ")
+        stdscr.addstr(9, second_column_width, str(gps_distance))
+
+        
+
         # --- JET VALUES ---
 
-        stdscr.addstr(9,start_x_partition, "--------------- JET ---------------")
-        stdscr.addstr(10,0,"Starboard Jet Current : ")
+        stdscr.addstr(10,start_x_partition, "--------------- JET ---------------")
+        stdscr.addstr(11,0,"Starboard Jet Current : ")
+
+        jet1_amps = ((jet1_current - 2.47) / 0.013)
+        jet2_amps = ((jet2_current- 2.47) / 0.013)
         
         if(jet1_current < 0):
-            stdscr.addstr(10,second_column_width,str(round(jet1_current,2)), curses.color_pair(1))
+            stdscr.addstr(11,second_column_width,str(round(jet1_amps,2)), curses.color_pair(1))
         else:
-            stdscr.addstr(10,second_column_width,str(round(jet1_current,2)), curses.color_pair(2))
+            stdscr.addstr(11,second_column_width,str(round(jet1_amps,2)), curses.color_pair(2))
 
-        stdscr.addstr(11,0,"Port Jet Current: ")
+        stdscr.addstr(12,0,"Port Jet Current: ")
 
         if(jet2_current < 0):
-            stdscr.addstr(11,second_column_width,str(round(jet2_current,2)), curses.color_pair(1))
+            stdscr.addstr(12,second_column_width,str(round(jet2_amps,2)), curses.color_pair(1))
         else:
-            stdscr.addstr(11,second_column_width,str(round(jet2_current,2)), curses.color_pair(2))
+            stdscr.addstr(12,second_column_width,str(round(jet2_amps,2)), curses.color_pair(2))
 
-        stdscr.addstr(12,0,"JET Current Delta: ")
+        stdscr.addstr(13,0,"JET Current Delta: ")
 
-        jet_delta = jet1_current - jet2_current
+        jet_delta = jet1_amps - jet2_amps
 
         if(jet_delta < -3 or jet_delta > 3):
-            stdscr.addstr(12,second_column_width,str(round(jet_delta,2)), curses.color_pair(1))
+            stdscr.addstr(13,second_column_width,str(round(jet_delta,2)), curses.color_pair(1))
         else:
-            stdscr.addstr(12,second_column_width,str(round(jet_delta,2)), curses.color_pair(2))
+            stdscr.addstr(13,second_column_width,str(round(jet_delta,2)), curses.color_pair(2))
 
+        stdscr.addstr(14,0,"Starboard Jet Temp c: ")
+        stdscr.addstr(14,second_column_width,str(jet1_temp))
 
-        
+        stdscr.addstr(15,0,"Port Jet Temp c: ")
+        stdscr.addstr(15,second_column_width,str(jet2_temp))
 
+        stdscr.addstr(16,0,"Compartment Temp c: ")
+        stdscr.addstr(16,second_column_width,str(compartment_temp))
      
         
 
@@ -154,7 +182,8 @@ if __name__ == '__main__':
             "/status/compass": on_compass_received,
             "/status/gps" : on_gps_received,
             "/status/adc" : on_adc_received,
-            "/status/internal_compass" : on_internal_compass_received
+            "/status/internal_compass" : on_internal_compass_received,
+            "/status/temp" : on_temp_received
         }
         subber = Subscriber(client_id="telemetry_live", broker_ip="192.168.1.170", default_subscriptions=default_subscriptions)
         thread = Thread(target=subber.listen)

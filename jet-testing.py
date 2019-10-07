@@ -49,9 +49,10 @@ def publish_temp_status():
     message = {
         'temp_c' : temp_c,
         'temp_f': temp_f,
-    }
+    }message
     app_json = json.dumps(message)
     pubber.publish("/status/temp",app_json)
+    print(message)
 
 def publish_adc_status():
 
