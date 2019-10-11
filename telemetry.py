@@ -20,6 +20,7 @@ gps_distance = 0
 
 jet1_current = 0 #starboard
 jet2_current = 0 #port
+pack_voltage = 0
 
 
 def on_compass_received(client, userdata, message):
@@ -54,10 +55,12 @@ def on_gps_received(client, userdata, message):
 def on_adc_received(client, userdata, message):
     global jet1_current
     global jet2_current
+    global pack_voltage
 
     obj = json.loads(message.payload.decode('utf-8'))
     jet1_current = obj["jet1_amps"]
     jet2_current = obj["jet2_amps"]
+    pack_voltage = obj['pack_voltage']
 def on_temp_received(client, userdata, message):
     global jet1_temp;
     global jet2_temp;
@@ -167,6 +170,9 @@ def draw(stdscr):
 
         stdscr.addstr(16,0,"Compartment Temp c: ")
         stdscr.addstr(16,second_column_width,str(compartment_temp))
+
+        stdscr.addstr(17,0,"Pack Voltage:  ")
+        stdscr.addstr(17,second_column_width,str(pack_voltage))
      
         
 

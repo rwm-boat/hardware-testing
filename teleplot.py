@@ -37,6 +37,8 @@ y1 = []
 def animate(i):
     ax1.clear()
     ax1.plot(x1,y1)
+    plt.show()
+
     #graph_data = #open(f"../logs/{_LOG_BASE}.txt", "r").read
 
 # def on_log_received(client, userdata, message):
@@ -58,7 +60,6 @@ def on_internal_compass_received(client, userdata, message):
     global int_compass_reading
     obj = json.loads(message.payload.decode('utf-8'))
     int_compass_reading = obj['heading']
-    x1 = x1.append(int_compass_reading)
 
 def on_gps_received(client, userdata, message):
     # create global variables for UI
@@ -78,7 +79,7 @@ def on_gps_received(client, userdata, message):
     speed_reading = obj["speed"]
     gps_heading_reading = obj["course"]
     gps_distance = obj['distance']
-    y1 = y1.append(lat_reading)
+
 
 def on_adc_received(client, userdata, message):
     global jet1_current
@@ -219,9 +220,12 @@ if __name__ == '__main__':
         thread = Thread(target=subber.listen)
         thread.start()
         while True:
+            x1.append(time_reading)
+            y1.append(jet1_current)
+            plt.plot(x1,y1)
             ani = animation.FuncAnimation(fig, animate, interval=1000)
             plt.show()
-            
+            time.sleep(0.1)
         #plt.show()
         #curses.wrapper(draw)
     except KeyboardInterrupt:
