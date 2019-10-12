@@ -29,16 +29,52 @@ _LOG_BASE = "log"
 
 #globals for plotting
 style.use ('fivethirtyeight')
-fig = plt.figure()
-ax1 = fig.add_subplot(1,1,1)
+fig, axs = plt.subplots(3)
+#ax1 = fig.add_subplot(111)
+#ax2 = fig.add_subplot(111)
+x2 = []
+y2 = []
 x1 = []
 y1 = []
-
+y3 = []
+y4 = []
+timeArray = []
+ntime = 0
 def animate(i):
-    ax1.clear()
-    ax1.plot(x1,y1)
-    plt.show()
-
+    global time_reading
+    global jet1_current
+    global mag_compass_reading
+    global ntime
+    ntime = ntime + 0.1
+    y2.append(jet1_current)
+    x1.append(ntime)
+    y1.append(mag_compass_reading)
+    y3.append(jet2_current)
+    y4.append(speed_reading)
+    if len(x1) > 100:
+        x1.pop(0)
+    if len(y1) > 100:
+        y1.pop(0)
+    if len(y2) > 100:
+        y2.pop(0)
+    if len(y3) > 100:
+        y3.pop(0)
+    if len(y4) > 100:
+        y4.pop(0) 
+    axs[0].clear()
+    axs[0].set_ylim(0,360)
+    axs[0].set_title('Mag Compass Reading')
+    axs[0].plot(x1,y1)
+    axs[1].clear()
+    axs[1].set_ylim(0,100)
+    axs[1].set_title('Jet Currents')
+    axs[1].plot(x1,y2)
+    axs[1].plot(x1,y3)
+    axs[2].clear()
+    axs[2].set_ylim(0,15)
+    axs[2].set_title('Speed (kn)')
+    axs[2].plot(x1,y4)
+    
     #graph_data = #open(f"../logs/{_LOG_BASE}.txt", "r").read
 
 # def on_log_received(client, userdata, message):
@@ -220,10 +256,8 @@ if __name__ == '__main__':
         thread = Thread(target=subber.listen)
         thread.start()
         while True:
-            x1.append(time_reading)
-            y1.append(jet1_current)
-            plt.plot(x1,y1)
-            ani = animation.FuncAnimation(fig, animate, interval=1000)
+            
+            ani = animation.FuncAnimation(fig, animate, interval=100)
             plt.show()
             time.sleep(0.1)
         #plt.show()
