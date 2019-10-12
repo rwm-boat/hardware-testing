@@ -138,8 +138,8 @@ def draw(stdscr):
         stdscr.addstr(10,start_x_partition, "--------------- JET ---------------")
         stdscr.addstr(11,0,"Starboard Jet Current : ")
 
-        jet1_amps = ((jet1_current - 2.47) / 0.013)
-        jet2_amps = ((jet2_current- 2.47) / 0.013)
+        jet1_amps = (jet1_current)
+        jet2_amps = (jet2_current)
         
         if(jet1_current < 0):
             stdscr.addstr(11,second_column_width,str(round(jet1_amps,2)), curses.color_pair(1))
@@ -172,7 +172,7 @@ def draw(stdscr):
         stdscr.addstr(16,second_column_width,str(compartment_temp))
 
         stdscr.addstr(17,0,"Pack Voltage:  ")
-        stdscr.addstr(17,second_column_width,str(pack_voltage))
+        stdscr.addstr(17,second_column_width,str(round(pack_voltage,2)))
      
         
 
