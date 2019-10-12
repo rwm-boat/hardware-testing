@@ -114,9 +114,30 @@ def plot_adc_temp_log(jet1_current, jet2_current, jet1_temp, jet2_temp, compartm
     ax1.grid()
     plt.show()
 
+#Plot of compass heading and speed
+def plot_speed_course(speed, course):
+    fig, ax1 = plt.subplots()
+
+    ax1.plot(speed, label="Speed", color = 'g')
+    ax1.legend(loc = 'lower right')
+
+    ax2 = ax1.twinx()
+
+    ax2.plot(course, label="GPS Course")
+    ax2.legend(loc = 'upper right')
+
+    plt.title("Boat Speed and GPS Course")
+    ax1.set_xlabel("Time (1/10 sec)")
+    ax1.set_ylabel('Speed (kn)')
+    ax2.set_ylabel("GPS Course")
+    
+    ax1.grid()
+    plt.show()
+
 
 load_log()
 plot_adc_speed_log(jet1_current,jet2_current, speed)
+plot_speed_course(speed, course)
 #plot_adc_temp_log(jet1_current,jet2_current,jet1_temp,jet2_temp, compartment_temp)
 
 
