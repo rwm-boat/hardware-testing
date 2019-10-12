@@ -107,7 +107,7 @@ def animate(i):
     axs[2].plot(x1,y4)
     axs[3].clear()
     axs[3].grid(which='major', linestyle=':', linewidth='0.5', color= 'white')
-    axs[3].set_ylim(0,15)
+    axs[3].set_ylim(0,20)
     axs[3].set_title('Pack Voltage', fontsize = 12)
     axs[3].plot(x2,y5)
     # axs2.clear()
