@@ -72,11 +72,11 @@ def plot_adc_speed_log(jet1_current, jet2_current, speed):
     ax2.plot(speed, label="Speed (kn)", linewidth=3.3)
     ax2.legend(loc = 'upper right')
     
-    plt.title("Jet Amperage vs. Time")
-    ax1.set_xlabel("Time (1/10 sec)")
-    ax1.set_ylabel('Amperes')
-    ax2.set_ylabel("Speed(kn)")
-    ax1.legend(loc = 'upper left')
+    plt.title("Jet Current Draw and Boat Speed vs. Time")
+    ax1.set_xlabel("Time (deciseconds)")
+    ax1.set_ylabel("Jet Current Draw (Amps)")
+    ax2.set_ylabel("Boat Speed (kn)")
+    ax1.legend(loc = 'lower right')
     ax1.grid()
     maxSpeed = round(max(speed), 2)
     maxJet1Cur = round(max(jet1_current), 2)
@@ -86,8 +86,8 @@ def plot_adc_speed_log(jet1_current, jet2_current, speed):
         r"Jet 1 Max Current = %s (Amps)" % (maxJet1Cur),
         r"Jet 2 Max Current = %s (Amps)" % (maxJet2Cut)))
     box = dict(boxstyle='round', facecolor='gray', alpha=0.5)
+    ax1.text(0, maxJet1Cur, textstr, fontsize=12, verticalalignment='top', bbox=box)
 
-    ax1.text(50, maxJet1Cur, textstr, fontsize=12, verticalalignment='top', bbox=box)
     plt.show()
     
     
