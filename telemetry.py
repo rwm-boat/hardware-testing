@@ -176,7 +176,7 @@ def draw(stdscr):
      
         
 
-        time.sleep(0.01)
+        time.sleep(0.1)
 
 # ==================
 # -- MAIN METHOD -- 
@@ -191,7 +191,7 @@ if __name__ == '__main__':
             "/status/internal_compass" : on_internal_compass_received,
             "/status/temp" : on_temp_received
         }
-        subber = Subscriber(client_id="telemetry_live_feed", broker_ip="192.168.1.170", default_subscriptions=default_subscriptions)
+        subber = Subscriber(client_id="telemetry_live_feedr", broker_ip="192.168.1.170", default_subscriptions=default_subscriptions)
         thread = Thread(target=subber.listen)
         thread.start()
 

@@ -88,9 +88,8 @@ def dir_rq(angle): #range is -25 to 25 degrees
 
 
 setup()
-th_rq(30)
-time.sleep(2)
-th_rq(-30)
-time.sleep(3)
-th_rq(0)
+th_rq(10)
+rb_rq(2)
+dir_rq(20)
+
 
