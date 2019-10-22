@@ -4,13 +4,13 @@ kit = ServoKit(channels=16)
 
 #Port Jet (Red Wires to Pi) JET2
 PESC = kit.servo[0]
-PDIR = kit.servo[1]
-PRB = kit.servo[2]
+PDIR = kit.servo[2]
+PRB = kit.servo[1]
  
 #Starboard Jet (Black Wires to Pi) JET1
 SESC = kit.servo[4]
-SDIR = kit.servo[5]
-SRB = kit.servo[6]
+SDIR = kit.servo[6]
+SRB = kit.servo[5]
 
 #------Tuining Variables
 reverse_limit = 0.3
@@ -87,13 +87,13 @@ def th_rq(jet,mag):
 
 def rb_rq(jet,level): #not set values
 
-    if level == 1: #up
-        pos = 0
+    if level == 1: #down
+        pos = 20
 
     if level == 2: #mid
-        pos = 50
+        pos = 75
 
-    if level == 3: #down
+    if level == 3: #up
         pos = 100
 
     if jet == 1:
@@ -126,11 +126,11 @@ def dir_rq(jet,angle): #range is -25 to 25 degrees
 
 
 setup()
-th_rq(1,10)
+#th_rq(1,10)
 rb_rq(1,2)
-dir_rq(1,20)
-th_rq(2,10)
+#dir_rq(1,-20)
+#th_rq(2,10)
 rb_rq(2,2)
-dir_rq(2,20)
+#dir_rq(2,-20)
 
 
