@@ -8,6 +8,11 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from matplotlib import style
 
+#plotting params
+params = {
+    'axes.titlesize' : 'xx-small'
+}
+plt.rcParams.update(params) 
 
 # global variables for plt.(Show)
 mag_compass_reading = 0
@@ -24,20 +29,94 @@ gps_distance = 0
 
 jet1_current = 0 #starboard
 jet2_current = 0 #port
+pack_voltage = 0
+
 #base for log files
 _LOG_BASE = "log"
 
 #globals for plotting
-style.use ('fivethirtyeight')
-fig = plt.figure()
-ax1 = fig.add_subplot(1,1,1)
+style.use ('dark_background')
+fig, axs = plt.subplots(4,1)
+fig.subplots_adjust(hspace = 0.5)
+#fig2, axs2 = plt.subplots(1,1)
+
+
+x2 = []
+y2 = []
 x1 = []
 y1 = []
+y3 = []
+y4 = []
+y5 = []
+x6 = []
+y6 = []
 
+timeArray = []
+ntime = 0
+stime = 0
 def animate(i):
-    ax1.clear()
-    ax1.plot(x1,y1)
-    plt.show()
+    global time_reading
+    global jet1_current
+    global mag_compass_reading
+    global ntime
+    global stime
+    global pack_voltage
+    global lon_reading
+    global lat_reading
+
+    stime = stime + 0.1
+    ntime = ntime + 0.1
+    y2.append(jet1_current)
+    x1.append(ntime)
+    x2.append(stime)
+    y1.append(mag_compass_reading)
+    y3.append(jet2_current)
+    y4.append(speed_reading)
+    y5.append(pack_voltage)
+    x6.append(lon_reading)
+    y6.append(lat_reading)
+    if len(x1) > 100:
+        x1.pop(0)
+    if len(y1) > 100:
+        y1.pop(0)
+    if len(y2) > 100:
+        y2.pop(0)
+    if len(y3) > 100:
+        y3.pop(0)
+    if len(y4) > 100:
+        y4.pop(0) 
+    #if len(y5) > 100:
+    #    y5.pop(0) 
+    
+    
+    axs[0].clear()
+    axs[0].grid(which='major', linestyle=':', linewidth='0.5', color= 'white')
+    axs[0].set_ylim(0,360)
+    axs[0].set_title('Mag Compass Reading', fontsize = 12)
+    axs[0].plot(x1,y1)
+    axs[1].clear()
+    axs[1].grid(which='major', linestyle=':', linewidth='0.5', color= 'white')
+    axs[1].set_ylim(0,100)
+    axs[1].set_title('Jet Currents', fontsize = 12)
+    axs[1].plot(x1,y2)
+    axs[1].plot(x1,y3)
+    axs[2].clear()
+    axs[2].grid(which='major', linestyle=':', linewidth='0.5', color= 'white')
+    axs[2].set_ylim(0,15)
+    axs[2].set_title('Speed (kn)', fontsize = 12)
+    axs[2].plot(x1,y4)
+    axs[3].clear()
+    axs[3].grid(which='major', linestyle=':', linewidth='0.5', color= 'white')
+    axs[3].set_ylim(0,20)
+    axs[3].set_title('Pack Voltage', fontsize = 12)
+    axs[3].plot(x2,y5)
+    # axs2.clear()
+    # axs2.grid(which='major', linestyle=':', linewidth='0.5', color= 'white')
+    # axs2.set_title('Position', fontsize = 12)
+    # axs2.scatter(x6,y6)
+
+
+    
 
     #graph_data = #open(f"../logs/{_LOG_BASE}.txt", "r").read
 
@@ -80,14 +159,15 @@ def on_gps_received(client, userdata, message):
     gps_heading_reading = obj["course"]
     gps_distance = obj['distance']
 
-
 def on_adc_received(client, userdata, message):
     global jet1_current
     global jet2_current
+    global pack_voltage
 
     obj = json.loads(message.payload.decode('utf-8'))
     jet1_current = obj["jet1_amps"]
     jet2_current = obj["jet2_amps"]
+    pack_voltage = obj['pack_voltage']
 def on_temp_received(client, userdata, message):
     global jet1_temp;
     global jet2_temp;
@@ -220,10 +300,9 @@ if __name__ == '__main__':
         thread = Thread(target=subber.listen)
         thread.start()
         while True:
-            x1.append(time_reading)
-            y1.append(jet1_current)
-            plt.plot(x1,y1)
-            ani = animation.FuncAnimation(fig, animate, interval=1000)
+            
+            ani = animation.FuncAnimation(fig, animate, interval=100)
+            #ani2 = animation.FuncAnimation(fig2, animate, interval=100)
             plt.show()
             time.sleep(0.1)
         #plt.show()

@@ -149,8 +149,8 @@ def draw(stdscr):
         stdscr.addstr(10,start_x_partition, "--------------- JET ---------------")
         stdscr.addstr(11,0,"Starboard Jet Current : ")
 
-        jet1_amps = ((jet1_current - 2.47) / 0.013)
-        jet2_amps = ((jet2_current- 2.47) / 0.013)
+        jet1_amps = (jet1_current)
+        jet2_amps = (jet2_current)
         
         if(jet1_current < 0):
             stdscr.addstr(11,second_column_width,str(round(jet1_amps,2)), curses.color_pair(1))
@@ -183,11 +183,11 @@ def draw(stdscr):
         stdscr.addstr(16,second_column_width,str(compartment_temp))
 
         stdscr.addstr(17,0,"Pack Voltage:  ")
-        stdscr.addstr(17,second_column_width,str(pack_voltage))
+        stdscr.addstr(17,second_column_width,str(round(pack_voltage,2)))
      
         
 
-        time.sleep(0.01)
+        time.sleep(0.1)
 
 # ==================
 # -- MAIN METHOD -- 
@@ -203,7 +203,7 @@ if __name__ == '__main__':
             "/status/temp" : on_temp_received,
             "/status/vector" : on_vector_received
         }
-        subber = Subscriber(client_id="telemetry_live_feed", broker_ip="192.168.1.170", default_subscriptions=default_subscriptions)
+        subber = Subscriber(client_id="telemetry_live_feedr", broker_ip="192.168.1.170", default_subscriptions=default_subscriptions)
         thread = Thread(target=subber.listen)
         thread.start()
 
