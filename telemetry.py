@@ -22,6 +22,9 @@ jet1_current = 0 #starboard
 jet2_current = 0 #port
 pack_voltage = 0
 
+target_heading = 0
+magnitude = 0
+
 
 def on_compass_received(client, userdata, message):
     global mag_compass_reading
@@ -62,14 +65,22 @@ def on_adc_received(client, userdata, message):
     jet2_current = obj["jet2_amps"]
     pack_voltage = obj['pack_voltage']
 def on_temp_received(client, userdata, message):
-    global jet1_temp;
-    global jet2_temp;
-    global compartment_temp;
+    global jet1_temp
+    global jet2_temp
+    global compartment_temp
 
     obj = json.loads(message.payload.decode('utf-8'))
     jet1_temp = obj["jet1_temp"]
     jet2_temp = obj["jet2_temp"]
     compartment_temp = obj["compartment_temp"]
+
+def on_vector_received(client, userdata, message):
+    global target_heading
+    global magnitude
+
+    obj = json.loads(message.payload.decode('utf-8'))
+    target_heading = obj["heading"]
+    magnitude = obj["magnitude"]
 
 def draw(stdscr):
     # Make stdscr.getch non-blocking
@@ -110,8 +121,8 @@ def draw(stdscr):
         stdscr.addstr(2,0,"Mag Compass: ")
         stdscr.addstr(2,second_column_width,str(mag_compass_reading))
 
-        stdscr.addstr(3,0,"Int. Mag Compass: ")
-        stdscr.addstr(3,second_column_width,str(round(int_compass_reading,2)))
+        stdscr.addstr(3,0,"Target Heading: ")
+        stdscr.addstr(3,second_column_width,str(round(target_heading,3)))
 
         stdscr.addstr(4,0,"GPS Compass: ")
         stdscr.addstr(4,second_column_width,str(gps_heading_reading))
@@ -189,7 +200,8 @@ if __name__ == '__main__':
             "/status/gps" : on_gps_received,
             "/status/adc" : on_adc_received,
             "/status/internal_compass" : on_internal_compass_received,
-            "/status/temp" : on_temp_received
+            "/status/temp" : on_temp_received,
+            "/status/vector" : on_vector_received
         }
         subber = Subscriber(client_id="telemetry_live_feed", broker_ip="192.168.1.170", default_subscriptions=default_subscriptions)
         thread = Thread(target=subber.listen)
