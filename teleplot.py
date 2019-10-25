@@ -169,9 +169,9 @@ def on_adc_received(client, userdata, message):
     jet2_current = obj["jet2_amps"]
     pack_voltage = obj['pack_voltage']
 def on_temp_received(client, userdata, message):
-    global jet1_temp;
-    global jet2_temp;
-    global compartment_temp;
+    global jet1_temp
+    global jet2_temp
+    global compartment_temp
 
     obj = json.loads(message.payload.decode('utf-8'))
     jet1_temp = obj["jet1_temp"]
