@@ -2,6 +2,7 @@ from tkinter import *
 import tkinter as tk
 import tk_tools
 
+
 import sys,os
 import time
 from mqtt_client.subscriber import Subscriber
@@ -14,7 +15,7 @@ int_compass_reading = 0
 time_reading = 0
 lat_reading = 0
 lon_reading = 0
-speed_reading =13
+speed_reading = 0
 gps_heading_reading = 0
 jet1_temp = 0
 jet2_temp = 0
@@ -38,8 +39,9 @@ class Application(tk.Frame):
         self.updater()
 
     def create_widgets(self):
+        # Pack Voltage Gauge
         self.pvgauge = tk_tools.Gauge(self, height = 200, width = 400,
-                             min_value=0,
+                             min_value=10,
                              max_value=20,
                              label='Pack Voltage',
                              unit=' V',
@@ -50,62 +52,58 @@ class Application(tk.Frame):
                              red_low=40)
                              #bg='grey')
         self.pvgauge.grid(row=0, column=1, rowspan=3, sticky='news')
+        # Speed Gauge
+        self.spdgauge = tk_tools.Gauge(self, height = 200, width = 400,
+                             min_value=0,
+                             max_value=20,
+                             label='Speed',
+                             unit=' (kn)',
+                             divisions=20,
+                             yellow=50,
+                             red=70)
+                             #bg='grey')
+        self.spdgauge.grid(row=0, column=2, rowspan=3, sticky='news')
+        
+        #File Name Entry Box
         self.FiNaEn = Entry(self)
         self.FiNaEn.grid(row=1, column=0)
+        #File name Label
         self.FiNaLa = Label(self, text="File name:")
         self.FiNaLa.grid(row=0, column=0, sticky='S')
-
-        self.rs = tk_tools.RotaryScale(self, max_value=360, size=100, unit='km/h')
-        self.rs.grid(row=0, column=4)
-
+        #Start Log Button
         self.StLog = Button(self, text="Start Log")
         self.StLog.grid(row=2,column=0, sticky='N')
+        
+        #Value Labels
+        self.Mag_Compass_Label = Label(self, text="Mag Compass:")
+        self.Mag_Compass_Label.grid(row=3, column=0, sticky='E')
+        self.Mag_Compass_Data = Entry
 
-    def update_pvgauge(self):
+        #Rotary Scale
+        self.rs = tk_tools.RotaryScale(self, max_value=360, size=100, unit='deg')
+        self.rs.grid(row=0, column=4)
+        
+
+    def update_spdgauge(self):
         global speed_reading
 
-        self.pvgauge.set_value(speed_reading)
+        self.spdgauge.set_value(speed_reading)
+
+    def update_pvgauge(self):
+        global pack_voltage
+
+        self.pvgauge.set_value(pack_voltage)
+    
+    def update_compass(self):
+        global mag_compass_reading
+
+        self.rs.set_value(mag_compass_reading)
 
     def updater(self):
+        self.update_spdgauge()
         self.update_pvgauge()
+        self.update_compass()
         self.after(100, self.updater)
-
-
-# root = tk.Tk()
-# root.title("RWM")
-
-# pack_voltage_gauge = tk_tools.Gauge(root, height = 200, width = 400,
-#                              min_value=0,
-#                              max_value=20,
-#                              label='Pack Voltage',
-#                              unit=' V',
-#                              divisions=30,
-#                              yellow=66,
-#                              red=70,
-#                              yellow_low=43,
-#                              red_low=40)
-#                              #bg='grey')
-# pack_voltage_gauge.grid(row=0, column=1, rowspan=3, sticky='news')
-
-
-# def update_gauge():
-#     global pack_voltage
-#     global speed_reading
-    
-#     pack_voltage_gauge.set_value(speed_reading)
-#     print("updating guage")
-#     # update the gauges according to their value
-
-#     #root.after(1000, update_gauge)
-
-# def update_rs():
-#     global gps_heading_reading
-    
-#     rs.set_value(gps_heading_reading)
-
-#     # update the gauges according to their value
-
-#     root.after(1000, update_rs)
 
 def on_compass_received(client, userdata, message):
     global mag_compass_reading
