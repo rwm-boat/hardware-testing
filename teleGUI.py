@@ -9,7 +9,11 @@ from mqtt_client.subscriber import Subscriber
 from threading import Thread
 import json
 
-# global variables for plt.(Show)
+
+MagVal = 13
+
+# global variables
+
 mag_compass_reading = 0
 int_compass_reading = 0
 time_reading = 0
@@ -26,6 +30,9 @@ jet1_current = 0 #starboard
 jet2_current = 0 #port
 pack_voltage = 0
 
+target_heading = 0
+magnitude = 0
+
 #base for log files
 _LOG_BASE = "log"
 
@@ -39,6 +46,8 @@ class Application(tk.Frame):
         self.updater()
 
     def create_widgets(self):
+        global MagVal
+        
         # Pack Voltage Gauge
         self.pvgauge = tk_tools.Gauge(self, height = 200, width = 400,
                              min_value=10,
@@ -77,7 +86,28 @@ class Application(tk.Frame):
         #Value Labels
         self.Mag_Compass_Label = Label(self, text="Mag Compass:")
         self.Mag_Compass_Label.grid(row=3, column=0, sticky='E')
-        self.Mag_Compass_Data = Entry
+        
+        self.Target_Heading_Label = Label(self, text="Target Heading:")
+        self.Target_Heading_Label.grid(row=4, column=0, sticky='E')
+        
+        self.GPS_Compass_Label = Label(self, text="GPS Compass:")
+        self.GPS_Compass_Label.grid(row=5, column=0, sticky='E')
+
+        self.GPS_Time_Label = Label(self, text="GPS Time:")
+        self.GPS_Time_Label.grid(row=6, column=0, sticky='E')
+
+        self.Latitude_Label = Label(self, text="Latitude:")
+        self.Latitude_Label.grid(row=7, column=0, sticky='E')
+
+        self.Longitude_Label = Label(self, text="Longitude:")
+        self.Longitude_Label.grid(row=8, column=0, sticky='E')
+
+        self.GPS_Speed_Label = Label(self, text="GPS Speed (kn):")
+        self.GPS_Speed_Label.grid(row=9, column=0, sticky='E')
+
+        self.GPS_Distance_Label = Label(self, text="GPS Distance:")
+        self.GPS_Distance_Label.grid(row=10, column=0, sticky='E')
+
 
         #Rotary Scale
         self.rs = tk_tools.RotaryScale(self, max_value=360, size=100, unit='deg')
@@ -99,10 +129,48 @@ class Application(tk.Frame):
 
         self.rs.set_value(mag_compass_reading)
 
+    def update_telemetry(self):
+        global mag_compass_reading
+        global target_heading
+        global magnitude
+        global mag_compass_reading
+        global time_reading
+        global lat_reading
+        global lon_reading
+        global speed_reading
+        global gps_heading_reading
+        global gps_distance
+
+        Mag_Compass_Data = Label(self, text=round(mag_compass_reading,2))
+        Mag_Compass_Data.grid(row=3, column=1, sticky='W')
+
+        Target_Heading_Data = Label(self, text=round(target_heading,2))
+        Target_Heading_Data.grid(row=4, column=1, sticky='W')
+
+        GPS_Compass_Data = Label(self, text=round(gps_heading_reading,2))
+        GPS_Compass_Data.grid(row=5, column=1, sticky='W')
+
+        GPS_Time_Data = Label(self, text=round(time_reading,2))
+        GPS_Time_Data.grid(row=6, column=1, sticky='W')
+
+        Latitude_Data = Label(self, text=round(lat_reading,2))
+        Latitude_Data.grid(row=7, column=1, sticky='W')
+
+        Longitude_Data = Label(self, text=round(lon_reading,2))
+        Longitude_Data.grid(row=8, column=1, sticky='W')
+
+        GPS_Speed_Data = Label(self, text=round(speed_reading,2))
+        GPS_Speed_Data.grid(row=9, column=1, sticky='W')
+
+        GPS_Distance_Data = Label(self, text=round(gps_distance,2))
+        GPS_Distance_Data.grid(row=10, column=1, sticky='W')
+
+        
     def updater(self):
         self.update_spdgauge()
         self.update_pvgauge()
         self.update_compass()
+        self.update_telemetry()
         self.after(100, self.updater)
 
 def on_compass_received(client, userdata, message):
@@ -153,6 +221,14 @@ def on_temp_received(client, userdata, message):
     jet2_temp = obj["jet2_temp"]
     compartment_temp = obj["compartment_temp"]
 
+def on_vector_received(client, userdata, message):
+    global target_heading
+    global magnitude
+
+    obj = json.loads(message.payload.decode('utf-8'))
+    target_heading = obj["heading"]
+    magnitude = obj["magnitude"]
+
 # FiNaEn = Entry(root)
 # FiNaEn.grid(row=1, column=0)
 # FiNaLa = Label(root, text="File name:")
@@ -174,7 +250,8 @@ if __name__ == '__main__':
             "/status/gps" : on_gps_received,
             "/status/adc" : on_adc_received,
             "/status/internal_compass" : on_internal_compass_received,
-            "/status/temp" : on_temp_received
+            "/status/temp" : on_temp_received,
+            "/status/vector" : on_vector_received
             #"/command/logging" : on_log_received
         }
         subber = Subscriber(client_id="teleGUI_live", broker_ip="192.168.1.170", default_subscriptions=default_subscriptions)
