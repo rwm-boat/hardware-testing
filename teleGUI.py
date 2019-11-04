@@ -44,8 +44,6 @@ class Application(tk.Frame):
         self.create_widgets()
         self.updater()
 
-  
-
     def create_widgets(self):
 
 
@@ -162,13 +160,17 @@ class Application(tk.Frame):
         self.rs.grid(row=0, column=8, rowspan=3)
 
         #Start Log Button
-        self.StLog = Button(self, text="Start Log", command=print("Hello"))
+        self.StLog = Button(self, text="Start Log", command=self.start_log)
         self.StLog.grid(row=2, column=0, sticky='N')
-
         
+        # self.Stlog = Button(self, command=self.start_log, text = "Start Log")
+        # self.StLog.grid(row=2, column=0, sticky='N')
 
+    
 
-  
+    def start_log(self):
+        print("logging")
+    
 
     def update_spdgauge(self):
         global speed_reading
@@ -346,15 +348,11 @@ if __name__ == '__main__':
         }
         subber = Subscriber(client_id="teleGUI_live", broker_ip="192.168.1.170", default_subscriptions=default_subscriptions)
         thread = Thread(target=subber.listen)
-        while True:
-            root = tk.Tk()
-            root.title("RWM")
-            app = Application(root)
-            root.mainloop()
-            
-            
-            
-            
         
+        root = tk.Tk()
+        root.title("RWM")
+        app = Application(root)
+        root.mainloop()
+            
     except KeyboardInterrupt:
-        exit
+        exit()
