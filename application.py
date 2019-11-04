@@ -1,7 +1,9 @@
 from tkinter import *
 import tkinter as tk
 import tk_tools
+from mqtt_client.publisher import Publisher
 
+pubber = Publisher(client_id="log_command", broker_ip="192.168.1.170")
 
 class Application(tk.Frame):
     #GUI
@@ -112,7 +114,8 @@ class Application(tk.Frame):
         self.Starboard_Jet_Current_Dig = tk_tools.SevenSegmentDigits(self, digits=10, background='black', digit_color='white', height=30)
         self.Starboard_Jet_Current_Dig.grid(row=4, column=4, sticky='NEWS', pady=4, ipady=2, padx=4, ipadx=2)
 
-
+        self.Log_Status_Led = tk_tools.Led(self, size=50)
+        self.Log_Status_Led.grid(row=2, column=1, sticky='NSEW', ipadx=10)
         #Rotary Scale
         self.rs = tk_tools.RotaryScale(self, max_value=360, size=100, unit='deg')
         self.rs.grid(row=0, column=8, rowspan=3)
@@ -122,4 +125,5 @@ class Application(tk.Frame):
         self.StLog.grid(row=2, column=0, sticky='N')
     
     def start_log(self):
-        print("logging")
+        log_title = self.FiNaEn.get()
+        pubber.publish("/command/logging", str(log_title))

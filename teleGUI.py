@@ -36,7 +36,7 @@ def on_gps_received(client, userdata, message):
     gps_distance = obj['distance']
 
     try:
-        app.spdgauge.set_value(speed_reading)
+        app.spdgauge.set_value(round(speed_reading, 2))
         app.Latitude_Dig.set_value(str(round(lat_reading, 7)))
         app.Longitude_Dig.set_value(str(round(lon_reading, 7)))
         app.GPS_Speed_Dig.set_value(str(round(speed_reading, 2)))
@@ -84,7 +84,11 @@ def on_log_received(client, userdata, message):
 
     obj = json.loads(message.payload.decode('utf-8'))
     exists = obj['exists']
- 
+    try:
+        if bool(exists): app.Log_Status_Led.to_green(on=True)
+        else: app.Log_Status_Led.to_green(on=False)
+    except:
+        pass
 if __name__ == '__main__':
 
     try:
