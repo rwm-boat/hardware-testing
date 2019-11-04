@@ -46,9 +46,6 @@ class Application(tk.Frame):
         self.FiNaLa = Label(self, text="File name:")
         self.FiNaLa.grid(row=0, column=0, sticky='S')
         
-
-        
-        
         #Value Labels, Digits
         self.Mag_Compass_Label = Label(self, text="Mag Compass:")
         self.Mag_Compass_Label.grid(row=3, column=0, sticky='E')
