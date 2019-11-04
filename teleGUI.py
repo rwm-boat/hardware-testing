@@ -36,7 +36,7 @@ def on_gps_received(client, userdata, message):
     gps_distance = obj['distance']
 
     try:
-        app.spdgauge.set_value(round(speed_reading,2))
+        app.spdgauge.set_value(speed_reading)
         app.Latitude_Dig.set_value(str(round(lat_reading, 7)))
         app.Longitude_Dig.set_value(str(round(lon_reading, 7)))
         app.GPS_Speed_Dig.set_value(str(round(speed_reading, 2)))
@@ -80,23 +80,27 @@ def on_vector_received(client, userdata, message):
         app.Target_Heading_Dig.set_value(str(round(target_heading, 2)))
     except:
         pass
+def on_log_received(client, userdata, message):
 
+    obj = json.loads(message.payload.decode('utf-8'))
+    exists = obj['exists']
+ 
 if __name__ == '__main__':
 
     try:
-      
+
         default_subscriptions = {
             "/status/compass": on_compass_received,
             "/status/gps" : on_gps_received,
             "/status/adc" : on_adc_received,
             "/status/temp" : on_temp_received,
             "/status/vector" : on_vector_received,
-            #"/command/logging" : on_log_received
+            "/command/log_exists" : on_log_received
         }
         subber = Subscriber(client_id="teleGUI_live", broker_ip="192.168.1.170", default_subscriptions=default_subscriptions)
         thread = Thread(target=subber.listen)
         thread.start()
-
+    
         root = tk.Tk()
         root.title("RWM")
         app = Application(root)
