@@ -6,7 +6,6 @@ import math
 from scipy.signal import butter, lfilter, freqz
 from scipy import signal
 
-
 gps_speed = []
 gps_course = []
 mag_compass = []
