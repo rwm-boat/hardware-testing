@@ -63,6 +63,7 @@ def generate_plot():
    
     ax2 = ax1.twinx()
     ax3 = ax1.twinx()
+    
 
     # ax2.plot(gps_speed, label="GPS Speed", linestyle='--')
     # ax2.legend(loc = 'upper right')
