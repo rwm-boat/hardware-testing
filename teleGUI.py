@@ -81,11 +81,12 @@ def on_vector_received(client, userdata, message):
     except:
         pass
 def on_log_received(client, userdata, message):
-
     obj = json.loads(message.payload.decode('utf-8'))
-    exists = obj['exists']
+    name = obj['name']
     try:
-        if bool(exists): app.Log_Status_Led.to_green(on=True)
+        print(name)
+        print(app.Log_Status_Led.get())
+        if name == app.FiNaEn.get(): app.Log_Status_Led.to_green(on=True)
         else: app.Log_Status_Led.to_green(on=False)
     except:
         pass
@@ -99,7 +100,7 @@ if __name__ == '__main__':
             "/status/adc" : on_adc_received,
             "/status/temp" : on_temp_received,
             "/status/vector" : on_vector_received,
-            "/command/log_exists" : on_log_received
+            "/status/log_name" : on_log_received
         }
         subber = Subscriber(client_id="teleGUI_live", broker_ip="192.168.1.170", default_subscriptions=default_subscriptions)
         thread = Thread(target=subber.listen)
