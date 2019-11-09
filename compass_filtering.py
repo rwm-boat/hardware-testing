@@ -7,12 +7,16 @@ from scipy.signal import butter, lfilter, freqz
 from scipy import signal
 import filterpy.kalman as kf
 from filterpy.stats import gaussian
+import easygui
 
 gps_speed = []
 gps_course = []
 mag_compass = []
+vector = []
 
-PATH = "/home/actual_daniel/Documents/Logs/11-8-19/Waypoint1Sec_2019-11-8-21:20:50.txt"
+#PATH = "/home/actual_daniel/Documents/Logs/11-8-19/Waypoint1Sec_2019-11-8-21:20:50.txt"
+PATH = easygui.fileopenbox()
+
 
 # load log data into arrays
 def load_log():
@@ -28,6 +32,8 @@ def load_log():
             mag_compass.append(float(obj['mag_compass']))
             gps_course.append(float(obj['gps_heading']))
             gps_speed.append(float(obj['speed']))
+            vector.append(float(obj['vector']))
+
 
 #enter the input array and number of terms, returns an array of the moving average
 def moving_avg_filter(data, terms):
@@ -76,7 +82,6 @@ def kalman_filter(data):
         # u is the movement of the system due to the process
         # Q is the noise of the process
         x, P = kf.predict(x=x, P=process_model)
-        print(x, process_model)
         # sensor says z with a standard deviation of sensorvar**2
         # probability of the measurement given the current state 
         #likelihood = gaussian(z, mean(z), sensor_var) 
@@ -100,10 +105,11 @@ def generate_plot():
     ax1.plot(mag_compass, label="Magnometer Heading", color = 'g')
     # ax1.plot(gps_course, label="GPS Heading", color = 'r')
     
-    ax1.plot(moving_avg_filter(mag_compass, 10), label="Moving Average Mag Compass: " + str(10), color = 'c')
+    #ax1.plot(moving_avg_filter(mag_compass, 10), label="Moving Average Mag Compass: " + str(10), color = 'c')
     ax1.plot(low_pass_filter(mag_compass, 1, 10), label="lowpassfilter", color = 'r')
     ax1.plot(kalman_filter(mag_compass), label="kalman filter", color = 'k')
     ax1.plot(low_pass_filter(kalman_filter(mag_compass),.5,10), label="kalman + low pass filter", color = 'b')
+    ax1.plot(vector, label="vector", color = 'm')
 
     ax1.legend(loc = 'lower right')
    
