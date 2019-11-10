@@ -108,7 +108,7 @@ def generate_plot():
     #ax1.plot(moving_avg_filter(mag_compass, 10), label="Moving Average Mag Compass: " + str(10), color = 'c')
     ax1.plot(low_pass_filter(mag_compass, 1, 10), label="lowpassfilter", color = 'r')
     ax1.plot(kalman_filter(mag_compass), label="kalman filter", color = 'k')
-    ax1.plot(low_pass_filter(kalman_filter(mag_compass),.5,10), label="kalman + low pass filter", color = 'b')
+    ax1.plot(low_pass_filter(kalman_filter(mag_compass),1,10), label="kalman + low pass filter", color = 'b')
     ax1.plot(vector, label="vector", color = 'm')
 
     ax1.legend(loc = 'lower right')
