@@ -91,7 +91,7 @@ def on_log_received(client, userdata, message):
             time.sleep(1)
 
         app.Log_Status_Led.to_green(on=False)
-    name = obj['name']
+    
     
     except:
         pass
