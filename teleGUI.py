@@ -25,6 +25,7 @@ def on_compass_received(client, userdata, message):
     except:
         pass
 
+
 def on_gps_received(client, userdata, message):
         
     obj = json.loads(message.payload.decode('utf-8'))
@@ -84,11 +85,16 @@ def on_log_received(client, userdata, message):
 
     obj = json.loads(message.payload.decode('utf-8'))
     exists = obj['exists']
+    print("log recieved here")
     try:
-        if bool(exists): app.Log_Status_Led.to_green(on=True)
-        else: app.Log_Status_Led.to_green(on=False)
+        if bool(exists): 
+            app.Log_Status_Led.to_green(on=True)
+            time.sleep(1)
+
+        app.Log_Status_Led.to_green(on=False)
     except:
         pass
+
 if __name__ == '__main__':
 
     try:
@@ -99,7 +105,7 @@ if __name__ == '__main__':
             "/status/adc" : on_adc_received,
             "/status/temp" : on_temp_received,
             "/status/vector" : on_vector_received,
-            "/command/log_exists" : on_log_received
+            "/status/log_exists" : on_log_received
         }
         subber = Subscriber(client_id="teleGUI_live", broker_ip="192.168.1.170", default_subscriptions=default_subscriptions)
         thread = Thread(target=subber.listen)

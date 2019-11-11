@@ -4,7 +4,7 @@ import tk_tools
 from mqtt_client.publisher import Publisher
 
 pubber = Publisher(client_id="log_command", broker_ip="192.168.1.170")
-
+stop = False
 class Application(tk.Frame):
     #GUI
 
@@ -15,6 +15,7 @@ class Application(tk.Frame):
         # self.updater()
 
     def create_widgets(self):
+        global stop
 
         # Pack Voltage Gauge
         self.pvgauge = tk_tools.Gauge(self, height = 200, width = 400,
@@ -123,7 +124,17 @@ class Application(tk.Frame):
         #Start Log Button
         self.StLog = Button(self, text="Start Log", command=self.start_log)
         self.StLog.grid(row=2, column=0, sticky='N')
-    
+
+        self.Stop_Log = Checkbutton(self, text="Stop Logging", command=self.stop_log)
+        self.Stop_Log.grid(row=0, column=1, sticky='N')
+
+    def stop_log(self):
+        global stop
+        stop = not stop
+        
+        pubber.publish("/command/stop_logging", stop)
+        
+
     def start_log(self):
         log_title = self.FiNaEn.get()
         pubber.publish("/command/logging", str(log_title))
