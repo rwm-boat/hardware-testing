@@ -82,7 +82,6 @@ def on_vector_received(client, userdata, message):
     except:
         pass
 def on_log_received(client, userdata, message):
-
     obj = json.loads(message.payload.decode('utf-8'))
     exists = obj['exists']
     print("log recieved here")
@@ -92,6 +91,8 @@ def on_log_received(client, userdata, message):
             time.sleep(1)
 
         app.Log_Status_Led.to_green(on=False)
+    name = obj['name']
+    
     except:
         pass
 

@@ -3,6 +3,7 @@ import json
 import math
 import easygui
 import numpy as np
+import os
 
 path = easygui.fileopenbox()
 
@@ -20,6 +21,11 @@ jet2_temp = []
 compartment_temp = []
 gps_distance = []
 
+mag_compass_mv_val = 0
+mag_compass_mvavg = []
+mag_compass_mvavg_n = 30
+mag_compass_avg = []
+
 def load_log():
 
     global jet1_current
@@ -35,6 +41,8 @@ def load_log():
     global jet2_temp
     global compartment_temp
     global gps_distance
+    global mag_compass_mv_val
+    global mag_compass_mvavg
 
     with open(path, "r") as log_file:
         error_filter = 20
@@ -58,8 +66,16 @@ def load_log():
             #internal compass
             int_compass_reading = obj['int_compass']
             #mag compass
-            mag_compass_reading = obj['mag_compass']
-
+            mag_compass_reading.append(obj['mag_compass'])
+            
+            if len(mag_compass_mvavg) < mag_compass_mvavg_n:
+                mag_compass_mvavg.append(float((obj['mag_compass'])))
+            else:
+                del mag_compass_mvavg[0]
+                mag_compass_mvavg.append(float((obj['mag_compass'])))
+            mag_compass_mv_val = sum(mag_compass_mvavg)/mag_compass_mvavg_n
+            mag_compass_avg.append(mag_compass_mv_val)
+            
 
 #Create plot of current vs. boat speed
 def plot_adc_speed_log(jet1_current, jet2_current, speed):
@@ -115,29 +131,36 @@ def plot_adc_temp_log(jet1_current, jet2_current, jet1_temp, jet2_temp, compartm
     plt.show()
 
 #Plot of compass heading and speed
-def plot_speed_course(speed, course):
+def plot_mag_course(mag_compass_reading, course, speed, mag_compass_avg):
     fig, ax1 = plt.subplots()
 
-    ax1.plot(speed, label="Speed", color = 'g')
+    ax1.plot(mag_compass_reading, label="Magnometer Heading", color = 'g')
+    ax1.plot(course, label="GPS Heading", color = 'R')
+    ax1.plot(mag_compass_avg, label="Moving Average Mag Compass: " + str(mag_compass_mvavg_n), color = 'k')
     ax1.legend(loc = 'lower right')
-
+   
     ax2 = ax1.twinx()
+    ax3 = ax1.twinx()
 
-    ax2.plot(course, label="GPS Course")
+    ax2.plot(speed, label="GPS Speed")
     ax2.legend(loc = 'upper right')
 
-    plt.title("Boat Speed and GPS Course")
+    # ax3.plot(jet1_current, label="Jet 1 Amps", color = 'g', linestyle = '--')
+    # ax3.plot(jet2_current, label="Jet 2 Amps", color = 'r', linestyle = "--")
+    # ax3.legend(loc = 'center bottom')
+
+    plt.title("Boat Speed and Course " + os.path.basename(path))
     ax1.set_xlabel("Time (1/10 sec)")
-    ax1.set_ylabel('Speed (kn)')
-    ax2.set_ylabel("GPS Course")
+    ax1.set_ylabel('Heading (degrees)')
+    ax2.set_ylabel("GPS Speed (kn)")
     
     ax1.grid()
     plt.show()
 
 
 load_log()
-plot_adc_speed_log(jet1_current,jet2_current, speed)
-plot_speed_course(speed, course)
+#plot_adc_speed_log(jet1_current,jet2_current, speed)
+plot_mag_course(mag_compass_reading, course, speed, mag_compass_avg)
 #plot_adc_temp_log(jet1_current,jet2_current,jet1_temp,jet2_temp, compartment_temp)
 
 
