@@ -13,6 +13,9 @@ gps_speed = []
 gps_course = []
 mag_compass = []
 vector = []
+kalman_live = []
+live_lp = []
+previous = 0
 
 #PATH = "/home/actual_daniel/Documents/Logs/11-8-19/Waypoint1Sec_2019-11-8-21:20:50.txt"
 PATH = easygui.fileopenbox()
@@ -33,6 +36,9 @@ def load_log():
             gps_course.append(float(obj['gps_heading']))
             gps_speed.append(float(obj['speed']))
             vector.append(float(obj['vector']))
+            kalman_live.append(float(obj['kalman']))
+            live_lp.append(float(obj['compass_lp']))
+
 
 
 #enter the input array and number of terms, returns an array of the moving average
@@ -97,6 +103,16 @@ def kalman_filter(data):
         output.append(x.mean())
     return output
 
+def low_pass_simple(data):
+    global previous
+    a = .2
+    out = []
+    for d in data:
+        output = (a*d) + (1-a) * previous
+        out.append(output)
+        previous = output
+    return out
+
 #Plot of compass heading and speed
 def generate_plot():
 
@@ -106,10 +122,11 @@ def generate_plot():
     # ax1.plot(gps_course, label="GPS Heading", color = 'r')
     
     #ax1.plot(moving_avg_filter(mag_compass, 10), label="Moving Average Mag Compass: " + str(10), color = 'c')
-    ax1.plot(low_pass_filter(mag_compass, 1, 10), label="lowpassfilter", color = 'r')
-    ax1.plot(kalman_filter(mag_compass), label="kalman filter", color = 'k')
-    ax1.plot(low_pass_filter(kalman_filter(mag_compass),1,10), label="kalman + low pass filter", color = 'b')
-    ax1.plot(vector, label="vector", color = 'm')
+    #ax1.plot(live_lp, label="live low pass", color = 'r')
+    ax1.plot(kalman_live, label="kalman live", color = 'k')
+    ax1.plot(low_pass_simple(kalman_live), label="kalman live + brent lp", color = 'r')
+    #ax1.plot(low_pass_filter(kalman_live,.2,10), label="kalman live + low pass filter", color = 'b')
+
 
     ax1.legend(loc = 'lower right')
    

@@ -29,7 +29,7 @@ magnitude = 0
 def on_compass_received(client, userdata, message):
     global mag_compass_reading
     obj = json.loads(message.payload.decode('utf-8'))
-    mag_compass_reading = obj['compass']
+    mag_compass_reading = obj['kalman']
 
 def on_internal_compass_received(client, userdata, message):
     global int_compass_reading
