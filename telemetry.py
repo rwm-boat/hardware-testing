@@ -6,7 +6,7 @@ from threading import Thread
 import json
 
 # global variables for UI
-mag_compass_reading = 0
+kalman_lp_live = 0
 int_compass_reading = 0
 time_reading = 0
 lat_reading = 0
@@ -27,9 +27,9 @@ magnitude = 0
 
 
 def on_compass_received(client, userdata, message):
-    global mag_compass_reading
+    global kalman_lp_live
     obj = json.loads(message.payload.decode('utf-8'))
-    mag_compass_reading = obj['kalman']
+    kalman_lp_live = obj['kalman_lp']
 
 def on_internal_compass_received(client, userdata, message):
     global int_compass_reading
@@ -103,91 +103,93 @@ def draw(stdscr):
     curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
 
     # define static text for UI
-   
-
+ 
     while True:
-        c = stdscr.getch()
+        try:
+            c = stdscr.getch()
 
-        curses.flushinp()
-        stdscr.clear()
+            curses.flushinp()
+            stdscr.clear()
 
-        # --- HEADER ---
-        stdscr.addstr(0,start_x_title, "RWM TELEMETRY")
+            # --- HEADER ---
+            stdscr.addstr(0,start_x_title, "RWM TELEMETRY")
+
+                        # --- NAV VALUES ---
+            stdscr.addstr(1,0, "----------------- COMPASS -----------------")
+            
+            stdscr.addstr(2,0,"KLP Heading: ")
+            stdscr.addstr(2,second_column_width,str(kalman_lp_live))
+
+            stdscr.addstr(3,0,"GPS Heading: ")
+            stdscr.addstr(3,second_column_width,str(round(gps_heading_reading,3)))
+
+            stdscr.addstr(4,0,"Target Heading: ")
+            stdscr.addstr(4,second_column_width,str(target_heading))
+
+            stdscr.addstr(5,0, " ------------------ GPS ------------------")
+
+
+            stdscr.addstr(6,0,"Latitude: ")
+            stdscr.addstr(6,second_column_width,str(round(lat_reading,6)))
+
+            stdscr.addstr(7,0,"Longitude: ")
+            stdscr.addstr(7,second_column_width,str(round(lon_reading,6)))
+
+            stdscr.addstr(8,0,"GPS Speed(kn): ")
+            stdscr.addstr(8, second_column_width, str(round(speed_reading,2)))
+
+            stdscr.addstr(9,0,"GPS distance (NM): ")
+            stdscr.addstr(9, second_column_width, str(gps_distance))
+
+            # --- JET VALUES ---
+
+            stdscr.addstr(10,0, "--------------- CURRENT(A)-----------------")
+            stdscr.addstr(11,0,"Starboard: ")
+
+            jet1_amps = (jet1_current)
+            jet2_amps = (jet2_current)
+            
+            if(jet1_current < 0):
+                stdscr.addstr(11,second_column_width,str(round(jet1_amps,2)), curses.color_pair(1))
+            else:
+                stdscr.addstr(11,second_column_width,str(round(jet1_amps,2)), curses.color_pair(2))
+
+            stdscr.addstr(12,0,"Port: ")
+
+            if(jet2_current < 0):
+                stdscr.addstr(12,second_column_width,str(round(jet2_amps,2)), curses.color_pair(1))
+            else:
+                stdscr.addstr(12,second_column_width,str(round(jet2_amps,2)), curses.color_pair(2))
+
+            stdscr.addstr(13,0,"Delta: ")
+
+            jet_delta = jet1_amps - jet2_amps
+
+            if(jet_delta < -3 or jet_delta > 3):
+                stdscr.addstr(13,second_column_width,str(round(jet_delta,2)), curses.color_pair(1))
+            else:
+                stdscr.addstr(13,second_column_width,str(round(jet_delta,2)), curses.color_pair(2))
+
+
+            stdscr.addstr(14,0, "---------------- TEMP(C) -----------------")
+
+            stdscr.addstr(15,0,"Starboard: ")
+            stdscr.addstr(15,second_column_width,str(jet1_temp))
+
+            stdscr.addstr(16,0,"Port: ")
+            stdscr.addstr(16,second_column_width,str(jet2_temp))
+
+            stdscr.addstr(17,0,"Compartment: ")
+            stdscr.addstr(17,second_column_width,str(compartment_temp))
+
+            stdscr.addstr(18,0,"Pack Voltage:  ")
+            stdscr.addstr(18,second_column_width,str(round(pack_voltage,2)))
         
-    
-        # --- NAV VALUES ---
-        stdscr.addstr(1,start_x_partition, "--------------- NAV ---------------")
-        
-        stdscr.addstr(2,0,"Mag Compass: ")
-        stdscr.addstr(2,second_column_width,str(mag_compass_reading))
+            
 
-        stdscr.addstr(3,0,"Target Heading: ")
-        stdscr.addstr(3,second_column_width,str(round(target_heading,3)))
-
-        stdscr.addstr(4,0,"GPS Compass: ")
-        stdscr.addstr(4,second_column_width,str(gps_heading_reading))
-
-        stdscr.addstr(5,0,"GPS Time: ")
-        stdscr.addstr(5,second_column_width,str(time_reading))
-
-        stdscr.addstr(6,0,"Latitude: ")
-        stdscr.addstr(6,second_column_width,str(round(lat_reading,6)))
-
-        stdscr.addstr(7,0,"Longitude: ")
-        stdscr.addstr(7,second_column_width,str(round(lon_reading,6)))
-
-        stdscr.addstr(8,0,"GPS Speed(kn): ")
-        stdscr.addstr(8, second_column_width, str(round(speed_reading,2)))
-
-        stdscr.addstr(9,0,"GPS distance (NM): ")
-        stdscr.addstr(9, second_column_width, str(gps_distance))
-
-        
-
-        # --- JET VALUES ---
-
-        stdscr.addstr(10,start_x_partition, "--------------- JET ---------------")
-        stdscr.addstr(11,0,"Starboard Jet Current : ")
-
-        jet1_amps = (jet1_current)
-        jet2_amps = (jet2_current)
-        
-        if(jet1_current < 0):
-            stdscr.addstr(11,second_column_width,str(round(jet1_amps,2)), curses.color_pair(1))
-        else:
-            stdscr.addstr(11,second_column_width,str(round(jet1_amps,2)), curses.color_pair(2))
-
-        stdscr.addstr(12,0,"Port Jet Current: ")
-
-        if(jet2_current < 0):
-            stdscr.addstr(12,second_column_width,str(round(jet2_amps,2)), curses.color_pair(1))
-        else:
-            stdscr.addstr(12,second_column_width,str(round(jet2_amps,2)), curses.color_pair(2))
-
-        stdscr.addstr(13,0,"JET Current Delta: ")
-
-        jet_delta = jet1_amps - jet2_amps
-
-        if(jet_delta < -3 or jet_delta > 3):
-            stdscr.addstr(13,second_column_width,str(round(jet_delta,2)), curses.color_pair(1))
-        else:
-            stdscr.addstr(13,second_column_width,str(round(jet_delta,2)), curses.color_pair(2))
-
-        stdscr.addstr(14,0,"Starboard Jet Temp c: ")
-        stdscr.addstr(14,second_column_width,str(jet1_temp))
-
-        stdscr.addstr(15,0,"Port Jet Temp c: ")
-        stdscr.addstr(15,second_column_width,str(jet2_temp))
-
-        stdscr.addstr(16,0,"Compartment Temp c: ")
-        stdscr.addstr(16,second_column_width,str(compartment_temp))
-
-        stdscr.addstr(17,0,"Pack Voltage:  ")
-        stdscr.addstr(17,second_column_width,str(round(pack_voltage,2)))
-     
-        
-
-        time.sleep(0.1)
+            time.sleep(0.1)
+        except Exception:
+            pass
 
 # ==================
 # -- MAIN METHOD -- 
