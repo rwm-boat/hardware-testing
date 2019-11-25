@@ -5,7 +5,8 @@ import os
 import math
 from scipy.signal import butter, lfilter, freqz
 from scipy import signal
-import filterpy.kalman as kf
+# import filterpy.kalman as kf
+from filterpy.kalman import KalmanFilter
 from filterpy.stats import gaussian
 import easygui
 
@@ -33,11 +34,11 @@ def load_log():
             obj = json.loads(line)
             
             mag_compass.append(float(obj['mag_compass']))
-            gps_course.append(float(obj['gps_heading']))
-            gps_speed.append(float(obj['speed']))
-            vector.append(float(obj['vector']))
-            kalman_live.append(float(obj['kalman']))
-            live_lp.append(float(obj['compass_lp']))
+            # gps_course.append(float(obj['gps_heading']))
+            # gps_speed.append(float(obj['speed']))
+            # vector.append(float(obj['vector']))
+            # kalman_live.append(float(obj['kalman']))
+            # live_lp.append(float(obj['compass_lp']))
 
 
 
@@ -62,46 +63,82 @@ def low_pass_filter(data, cutoff_freq, sample_freq, order=5):
 
     return output
 
-def kalman_filter(data):
+def pva_kalman_filter():
+
+    ## Measurement Noise Matrix
+    R_std = 1
+    ## Variance in white noise
+    Q = 0.01 
+    ## Discrete Time Step
+    dt = 0.1
+
+    kf = KalmanFilter(dim_x=3,dim_z=1)
+
+    ### x = [x, xdx, xdx^2] (position, velocity, acceleration)
+    kf.x = np.zeros(3)
+    print(kf.x)
+
+    ### Covariance Matrix
+    ## Setting the initial convariance's for position, velocity and acceleration
+    kf.P[0, 0] = 360
+    kf.P[1, 1] = 1 ## No Clue - Change Later
+    kf.P[2, 2] = 1 ## No Clue - Change Later
+ 
+    kf.R *= R_std**2
+
+    kf.Q = kf.Q_discrete_white_noise(3, dt, Q)
+
+
+    ### Measurement Function
+    kf.F = np.array([[1., dt, .5*dt*dt],
+                    [0., 1.,       dt],
+                    [0., 0.,       1.]])
+
+    kf.H = np.array([[1., 0., 0.]])
+
+
+
+
+# def kalman_filter(data):
     
-    output = []
+#     output = []
 
-    ### sqrt of the variance is the error distance (aka. meters or degrees) ###
-    # how much error there is in the process model (how much do we trust the model)
-    process_var = .1
-    # how much error there is in each sensor measurement (how much do we trust the sensor)
-    sensor_var = 5
+#     ### sqrt of the variance is the error distance (aka. meters or degrees) ###
+#     # how much error there is in the process model (how much do we trust the model)
+#     process_var = .1
+#     # how much error there is in each sensor measurement (how much do we trust the sensor)
+#     sensor_var = 5
 
-    ## Initial State ##
-    # [position, variance, sensor_var] sensor state
-    # [(meters, degrees), (meters, degrees), ] ## remember sqrt of variance is distance error
-    x = gaussian(data[1], 20**2., sensor_var) 
+#     ## Initial State ##
+#     # [position, variance, sensor_var] sensor state
+#     # [(meters, degrees), (meters, degrees), ] ## remember sqrt of variance is distance error
+#     x = gaussian(data[1], 20**2., sensor_var) 
 
-    #[position, velocity, process_var] of model initial state
-    # how we think the system works
-    process_model = gaussian(0., 0., process_var)
+#     #[position, velocity, process_var] of model initial state
+#     # how we think the system works
+#     process_model = gaussian(0., 0., process_var)
 
-    for z in data:
-        # -------- PREDICT --------- #
-        # X is the state of the system
-        # P is the variance of the system
-        # u is the movement of the system due to the process
-        # Q is the noise of the process
-        x, P = kf.predict(x=x, P=process_model)
-        # sensor says z with a standard deviation of sensorvar**2
-        # probability of the measurement given the current state 
-        #likelihood = gaussian(z, mean(z), sensor_var) 
+#     for z in data:
+#         # -------- PREDICT --------- #
+#         # X is the state of the system
+#         # P is the variance of the system
+#         # u is the movement of the system due to the process
+#         # Q is the noise of the process
+#         x, P = kf.predict(x=x, P=process_model)
+#         # sensor says z with a standard deviation of sensorvar**2
+#         # probability of the measurement given the current state 
+#         #likelihood = gaussian(z, mean(z), sensor_var) 
 
-        # -------- UPDATE --------- #
-        # X is the state of the system
-        # P is the variance of the system
-        # z is the measurement
-        # R is the measurement variance
-        x, P = kf.update(x=x, P=P, z=z, R=sensor_var)
-        #print( "x: ",'%.3f' % x, "var: " '%.3f' % P, "z: ", '%.3f' % z)
-        #print(x)
-        output.append(x.mean())
-    return output
+#         # -------- UPDATE --------- #
+#         # X is the state of the system
+#         # P is the variance of the system
+#         # z is the measurement
+#         # R is the measurement variance
+#         x, P = kf.update(x=x, P=P, z=z, R=sensor_var)
+#         #print( "x: ",'%.3f' % x, "var: " '%.3f' % P, "z: ", '%.3f' % z)
+#         #print(x)
+#         output.append(x.mean())
+#     return output
 
 def low_pass_simple(data):
     global previous
@@ -116,10 +153,15 @@ def low_pass_simple(data):
 #Plot of compass heading and speed
 def generate_plot():
 
+
+    kalman_filter = pva_kalman_filter()
+    mu, cov, _, _ = kalman_filter.batch_filter(mag_compass)
+
+
     fig, ax1 = plt.subplots()
 
     ax1.plot(mag_compass, label="Magnometer Heading", color = 'g')
-    # ax1.plot(gps_course, label="GPS Heading", color = 'r')
+    ax1.plot(mu[:, 0], mu[:, 2], label="dual kalman", color = 'r')
     
     #ax1.plot(moving_avg_filter(mag_compass, 10), label="Moving Average Mag Compass: " + str(10), color = 'c')
     #ax1.plot(live_lp, label="live low pass", color = 'r')
@@ -141,5 +183,6 @@ def generate_plot():
     ax1.grid()
     plt.show()
 
+pva_kalman_filter()
 load_log()
 generate_plot()
