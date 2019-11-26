@@ -7,17 +7,12 @@ import matplotlib.pyplot as plt
 import easygui
 import json
 
-## ----------- GENERATE RANDOM DATA ----------------##
-xs = range(500)
-ys = randn(500)*1. + 10
-
 # PATH = "/Users/Daniel-LT/Documents/WPI/MQP/Logs/circle_2_2019-11-10-20_19_37.txt"
 PATH = easygui.fileopenbox()
+
 mag_compass = []
 kalman_live = []
-# output array
 pys = []
-## --------------------------------------------------##
 
 def load_log():
 
@@ -38,14 +33,14 @@ def pva_kalman_filter():
 	# Control Inputs
 	kf.u = 0
 
-	# Measurement Function
+	# Measurement Function (we are only recording position)
 	kf.H = np.array([[1,0,0]])
 
 	# State Variable
 	kf.x = np.array([[0,0,0]]).T
 
 	# Measurement Noise 
-	kf.R = 10
+	kf.R = 20
 
 	# Process/Motion Noise
 	kf.Q = np.eye(3) * 5
@@ -62,7 +57,6 @@ def pva_kalman_filter():
 		kf.predict()
 		kf.update(z)
 		pys.append(kf.x[0])
-		print(kf.x[0])
 
 ## ---------------- PLOT -------------------------##
 load_log()
