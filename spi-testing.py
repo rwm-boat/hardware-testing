@@ -25,11 +25,13 @@ def read_rawAngle():
     command = command | angle_adress
 
     command |= (calcEvenParity(command)<<15)
-    print(bin(command))
+    print("sent message: " + bin(command))
     msg = [command, 0b00000000]
     reply = spi.xfer2(msg)
 
-    print(reply)
+    print("response: " + bin(reply[0]& ~0xC000))
+    
 
-read_rawAngle()
+for x in range(10):
+    read_rawAngle()
 
