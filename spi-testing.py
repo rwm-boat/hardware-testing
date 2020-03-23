@@ -8,7 +8,7 @@ spi.max_speed_hz = 1000000 # 1MHz clock (AMS accepts up to 10MHz)
 
        
 for x in range(10):
-    msg = [0b11111111, 0x00]
+    msg = [0b11111111, 0b11111111]
     reply = spi.xfer2(msg)
 
     print("first frame: " + bin(reply[0]))
