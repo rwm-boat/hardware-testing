@@ -11,7 +11,7 @@ for x in range(10):
     msg = [0b11111111, 0x00]
     reply = spi.xfer2(msg)
 
-    print("first frame: " + bin(reply[0])
+    print("first frame: " + bin(reply[0]))
     print("second frame: " + bin(reply[1]))
     
     time.sleep(1)
