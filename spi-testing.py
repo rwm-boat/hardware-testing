@@ -27,7 +27,7 @@ try:
         print(adj_rotation)
         
         time.sleep(0.1)
-        kit.motor1.throttle = 0
+    kit.motor1.throttle = 0
 
 except KeyboardInterrupt:
     kit.motor1.throttle = 0
