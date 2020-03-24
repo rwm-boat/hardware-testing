@@ -1,11 +1,16 @@
 import spidev
 import time
+from adafruit_motorkit import MotorKit
+
+kit = MotorKit()
 
 spi = spidev.SpiDev()
 spi.open(0, 0) # (bus, device)
 spi.max_speed_hz = 1000000 # 1MHz clock (AMS accepts up to 10MHz)
 spi.mode = 0b1
 spi.lsbfirst = False
+
+kit.motor1.throttle = 0.25
        
 for x in range(1000):
     msg = [0b11111111, 0b11111111]
@@ -20,4 +25,6 @@ for x in range(1000):
     print(adj_rotation)
     
     time.sleep(0.1)
+
+kit.motor1.throttle = 0
 
