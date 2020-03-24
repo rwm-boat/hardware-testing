@@ -43,7 +43,7 @@ def pva_kalman_filter():
 	kf.R = 20
 
 	# Process/Motion Noise
-	kf.Q = np.eye(3) * 5
+	kf.Q = np.eye(3) * .1
 
 	# Covariance Matrix
 	kf.P = np.eye(3)*1
