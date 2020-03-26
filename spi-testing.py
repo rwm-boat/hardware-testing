@@ -18,10 +18,17 @@ def read_angle():
 
 def port_select(int port):
 
-    error = read_angle() - (port * 30)
-    while (error > 5):
-        error = read_angle() - (port * 30)
-        kit.motor1.throttle(error * 0.033)
+    # [PURGE,ONE,...,NINE]
+    port_location = [260,295,330,5,40,75,110,150,186,222]
+    cost = 0.033
+    error = abs(read_angle() - (port_location[port])
+
+    while (error > 4):
+        error = abs(read_angle() - port_location[port])
+        print("error: " + error)
+        throttle = error * const
+        print("throttle: " + throttle)
+        kit.motor1.throttle(throttle)
     kit.motor1.throttle(0)
     
 try:
