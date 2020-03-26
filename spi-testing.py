@@ -25,9 +25,9 @@ def port_select(port):
 
     while error > 4:
         error = abs(read_angle() - port_location[port])
-        print("error: " + error)
+        print("error: " + str(error))
         throttle = error * const
-        print("throttle: " + throttle)
+        print("throttle: " + str(throttle))
         kit.motor1.throttle(throttle)
     kit.motor1.throttle(0)
     
