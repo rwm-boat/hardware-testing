@@ -21,7 +21,7 @@ def port_select(port):
     # [PURGE,ONE,...,NINE]
     port_location = [260,295,330,5,40,75,110,150,186,222]
     cost = 0.033
-    error = abs(read_angle() - (port_location[port])
+    error = abs(read_angle() - (port_location[port]))
 
     while error > 4:
         error = abs(read_angle() - port_location[port])
