@@ -23,7 +23,7 @@ def port_select(port):
 
     # [PURGE,ONE,...,NINE]
     port_location = [260,295,330,5,40,75,110,150,186,222]
-    cost = 0.033
+    const = 0.033
     error = abs(read_angle() - (port_location[port]))
 
     while error > 4:
@@ -31,11 +31,10 @@ def port_select(port):
         print("error: " + str(error))
         throttle = error * const
         print("throttle: " + str(throttle))
-        kit.motor1.throttle(throttle)
-    kit.motor1.throttle(0)
+        kit.motor1.throttle = 0.25
+    kit.motor1.throttle = 0
     
 try:
-
     
     spi.open(0, 0) # (bus, device)
     spi.max_speed_hz = 1000000 # 1MHz clock (AMS accepts up to 10MHz)
