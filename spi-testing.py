@@ -16,7 +16,7 @@ def read_angle():
 
     return adj_rotation
 
-def port_select(int port):
+def port_select(port):
 
     # [PURGE,ONE,...,NINE]
     port_location = [260,295,330,5,40,75,110,150,186,222]
