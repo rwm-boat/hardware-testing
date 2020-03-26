@@ -2,6 +2,9 @@ import spidev
 import time
 from adafruit_motorkit import MotorKit
 
+kit = MotorKit()
+spi = spidev.SpiDev()
+
 def read_angle():
     msg = [0b11111111, 0b11111111]
     reply = spi.xfer2(msg)
@@ -33,9 +36,7 @@ def port_select(port):
     
 try:
 
-    kit = MotorKit()
-
-    spi = spidev.SpiDev()
+    
     spi.open(0, 0) # (bus, device)
     spi.max_speed_hz = 1000000 # 1MHz clock (AMS accepts up to 10MHz)
     spi.mode = 0b1
