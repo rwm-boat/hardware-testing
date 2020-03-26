@@ -23,7 +23,7 @@ def port_select(port):
     cost = 0.033
     error = abs(read_angle() - (port_location[port])
 
-    while (error > 4):
+    while error > 4:
         error = abs(read_angle() - port_location[port])
         print("error: " + error)
         throttle = error * const
