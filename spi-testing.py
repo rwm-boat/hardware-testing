@@ -4,7 +4,7 @@ from adafruit_motorkit import MotorKit
 
 kit = MotorKit()
 spi = spidev.SpiDev()
-
+iError = 0
 def read_angle():
     msg = [0b11111111, 0b11111111]
     reply = spi.xfer2(msg)
@@ -23,13 +23,15 @@ def port_select(port):
 
     # [PURGE,ONE,...,NINE]
     port_location = [99,134,172,208,250,285,328,359,27,65]
-    const = 1/20
+    Kp = 1/20
+    Ki = 1/50
     error = abs(read_angle() - (port_location[port]))
+    iError += error
 
     while error > 1:
         error = abs(read_angle() - port_location[port])
         print("error: " + str(error))
-        throttle = error * const
+        throttle = (error * Kp) + (iError * Ki)
         print("throttle: " + str(throttle))
         if throttle > 1: throttle = 1
         kit.motor1.throttle = throttle
