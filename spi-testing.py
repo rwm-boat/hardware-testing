@@ -22,16 +22,17 @@ def read_angle():
 def port_select(port):
 
     # [PURGE,ONE,...,NINE]
-    port_location = [260,295,330,5,40,75,110,150,186,222]
-    const = 0.033
+    port_location = [99,134,172,208,250,285,328,359,27,65]
+    const = 1/20
     error = abs(read_angle() - (port_location[port]))
 
-    while error > 4:
+    while error > 1:
         error = abs(read_angle() - port_location[port])
         print("error: " + str(error))
         throttle = error * const
         print("throttle: " + str(throttle))
-        kit.motor1.throttle = 0.25
+        if throttle > 1: throttle = 1
+        kit.motor1.throttle = throttle
     kit.motor1.throttle = 0
     
 try:
@@ -41,7 +42,7 @@ try:
     spi.mode = 0b1
     spi.lsbfirst = False
 
-    port_select(1)
+    port_select(5)
 
 except KeyboardInterrupt:
     kit.motor1.throttle = 0
