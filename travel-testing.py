@@ -48,7 +48,7 @@ def stateClear():
     sleep(.5)
     global count
     count = count
-    if not i:
+    if i:
         return stateClear
     else:
         return stateDark
@@ -61,6 +61,7 @@ def stateDark():
     global count
     
     if i:
+        print(count)
         count = count + 1
         return stateClear
     else:
