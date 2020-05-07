@@ -35,6 +35,7 @@ def port_select(port):
         throttle = (error * Kp) + (iError * Ki)
         print("throttle: " + str(throttle))
         if throttle > 1: throttle = 1
+        if throttle < -1 : throttle = -1
         kit.motor1.throttle = throttle
     kit.motor1.throttle = 0
     
