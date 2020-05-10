@@ -66,19 +66,19 @@ def load_log():
             #temperature sensors
             jet1_motor_temp.append(obj["jet1_motor_temp"])
             jet2_motor_temp.append(obj["jet2_motor_temp"])
-            jet1_esc_temp.append(obj["jet1_motor_temp"])
-            jet2_esc_temp.append(obj["jet2_motor_temp"])
+            jet1_esc_temp.append(obj["jet1_esc_temp"])
+            jet2_esc_temp.append(obj["jet2_esc_temp"])
             MPA_temp.append(obj["MPA_temp"])
             #internal compass
-            int_compass_reading = obj['int_compass']
+            int_compass_reading = obj['int_compass_reading']
             #mag compass
-            mag_compass_reading.append(obj['mag_compass'])
+            mag_compass_reading.append(obj['mag_compass_reading'])
             
             if len(mag_compass_mvavg) < mag_compass_mvavg_n:
-                mag_compass_mvavg.append(float((obj['mag_compass'])))
+                mag_compass_mvavg.append(float((obj['mag_compass_reading'])))
             else:
                 del mag_compass_mvavg[0]
-                mag_compass_mvavg.append(float((obj['mag_compass'])))
+                mag_compass_mvavg.append(float((obj['mag_compass_reading'])))
             mag_compass_mv_val = sum(mag_compass_mvavg)/mag_compass_mvavg_n
             mag_compass_avg.append(mag_compass_mv_val)
             
@@ -91,13 +91,13 @@ def plot_adc_speed_log(jet1_current, jet2_current, speed_reading):
     ax1.plot(jet2_current, label="Jet 2 Amps", color = 'r')
     
     ax2 = ax1.twinx() #second y axis
-    ax2.plot(speed_reading, label="Speed (kn)", linewidth=3.3)
+    ax2.plot(speed_reading, label="Speed (knots)", linewidth=3.3)
     ax2.legend(loc = 'upper right')
     
-    plt.title("Jet Current Draw and Boat Speed vs. Time")
+    plt.title("Jet Current Draw and Boat Speed")
     ax1.set_xlabel("Time (deciseconds)")
     ax1.set_ylabel("Jet Current Draw (Amps)")
-    ax2.set_ylabel("Boat Speed (kn)")
+    ax2.set_ylabel("Boat Speed (knots)")
     ax1.legend(loc = 'lower right')
     ax1.grid()
     maxSpeed = round(max(speed_reading), 2)
@@ -116,24 +116,26 @@ def plot_adc_speed_log(jet1_current, jet2_current, speed_reading):
 
 
 #Plot of temperature and current
-def plot_adc_temp_log(jet1_current, jet2_current, jet1_temp, jet2_temp, compartment_temp):
+def plot_adc_temp_log(jet1_current, jet2_current, jet1_motor_temp, jet2_motor_temp, jet1_esc_temp, jet2_esc_temp):
     fig, ax1 = plt.subplots()
 
     ax1.plot(jet1_current, label="Jet 1 Amps", color = 'g')
     ax1.plot(jet2_current, label="Jet 2 Amps", color = 'r')
     
     ax2 = ax1.twinx()
-    ax2.plot(jet1_temp, label="Jet 1 Temp")
-    ax2.plot(jet2_temp, label="Jet 2 Temp")
-    ax2.plot(compartment_temp, label="Compartment Temp")
-    ax2.legend()
+    ax2.plot(jet1_motor_temp, label="Jet 1 Motor Temp")
+    ax2.plot(jet2_motor_temp, label="Jet 2 Motor Temp")
+    ax2.plot(jet1_esc_temp, label="Jet 1 ESC Temp")
+    ax2.plot(jet2_esc_temp, label="Jet 2 ESC Temp")
+    # ax2.legend()
 
     plt.title("Jet Amperage vs. Temperature")
     ax1.set_xlabel("Time (1/10 sec)")
     ax1.set_ylabel('Amperes')
-    ax2.set_ylabel("Temperature Celcius")
+    # ax2.set_ylabel("Temperature Celcius")
     ax1.legend()
     ax1.grid()
+
     plt.show()
 
 #Plot of compass heading and speed
@@ -167,6 +169,6 @@ def plot_mag_course(mag_compass_reading, course, speed, mag_compass_avg):
 load_log()
 plot_adc_speed_log(jet1_current,jet2_current, speed_reading)
 #plot_mag_course(mag_compass_reading, course, speed, mag_compass_avg)
-#plot_adc_temp_log(jet1_current,jet2_current,jet1_temp,jet2_temp, compartment_temp)
+#plot_adc_temp_log(jet1_current,jet2_current,jet1_motor_temp,jet2_motor_temp,jet1_esc_temp,jet2_esc_temp)
 
 

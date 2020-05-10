@@ -2,9 +2,18 @@ import spidev
 import time
 from adafruit_motorkit import MotorKit
 
+
 kit = MotorKit()
 spi = spidev.SpiDev()
 iError = 0
+
+# GPIO setup
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(23,GPIO.OUT)
+GPIO.setup(24,GPIO.OUT)
+
+
 def read_angle():
     msg = [0b11111111, 0b11111111]
     reply = spi.xfer2(msg)
@@ -37,15 +46,31 @@ def port_select(port):
         if throttle > 1: throttle = 1
         kit.motor1.throttle = throttle
     kit.motor1.throttle = 0
-    
+
+def fwd_pump():
+   GPIO.output(23,GPIO.HIGH)
+   GPIO.output(24,GPIO.LOW)
+def rev_pump():
+   GPIO.output(24,GPIO.HIGH)
+   GPIO.output(23,GPIO.LOW)
+def stop_pump():
+    GPIO.output(23,GPIO.LOW)
+    GPIO.output(24,GPIO.LOW)
+
 try:
-    
     spi.open(0, 0) # (bus, device)
     spi.max_speed_hz = 1000000 # 1MHz clock (AMS accepts up to 10MHz)
     spi.mode = 0b1
     spi.lsbfirst = False
 
-    port_select(1)
+    port_select(0)
+    fwd_pump()
+    time.sleep(5)
+    stop_pump()
+    port_select(2)
+    fwd_pump()
+    time.sleep(5)
+    stop_pump()
 
 except KeyboardInterrupt:
     kit.motor1.throttle = 0
