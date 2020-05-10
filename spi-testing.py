@@ -23,13 +23,13 @@ def port_select(port):
 
     # [PURGE,ONE,...,NINE]
     port_location = [99,134,172,208,250,285,328,359,27,65]
-    Kp = 1/20
+    Kp = 1/60
     Ki = 1/50
     error = abs(read_angle() - (port_location[port]))
     global iError
     iError = iError + error
 
-    while error > .5:
+    while error > .75:
         error = abs(read_angle() - port_location[port])
         print("error: " + str(error))
         throttle = (error * Kp) + (iError * Ki)
@@ -37,6 +37,7 @@ def port_select(port):
         if throttle > 1: throttle = 1
         if throttle < -1 : throttle = -1
         kit.motor1.throttle = throttle
+        time.sleep(0.01)
     kit.motor1.throttle = 0
     
 try:
@@ -46,7 +47,7 @@ try:
     spi.mode = 0b1
     spi.lsbfirst = False
 
-    port_select(1)
+    port_select(3)
 
 except KeyboardInterrupt:
     kit.motor1.throttle = 0
