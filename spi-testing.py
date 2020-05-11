@@ -54,9 +54,9 @@ def port_select(port):
 
     while error > .5 or error < -0.5:
         angle = read_angle()
-       
-        if(angle < -180) anle = angle + 360
-        elif(angle > 180) angle = angle - 360
+        print(angle)
+        if(angle < -180): angle = angle + 360
+        elif(angle > 180): angle = angle - 360
         
         error = port_location[port] - angle
 
