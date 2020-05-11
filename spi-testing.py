@@ -2,6 +2,7 @@ import spidev
 import time
 from adafruit_motorkit import MotorKit
 import RPi.GPIO as GPIO
+from simple-pid import PID
 
 kit = MotorKit()
 spi = spidev.SpiDev()
@@ -32,20 +33,34 @@ def port_select(port):
 
     # [PURGE,ONE,...,NINE]
     port_location = [97,134,172,208,250,285,328,359,27,65]
-    Kp = 1/10
-    Ki = 1/50
     error = abs(read_angle() - (port_location[port]))
-    global iError
-    iError = iError + error
+    pid = PID(1, 0.1, 0.05, setpoint = 1)
+    # global iError
+    # iError = iError + error
+    # Kp = 1/10
+    # Ki = 1/50
+    # while error > .5:
+    #     error = abs(read_angle() - port_location[port])
+    #     print("error: " + str(error))
+    #     throttle = (error * Kp) 
+    #     #+ (iError * Ki)
+    #     print("throttle: " + str(throttle))
+    #     if throttle > 1: throttle = 1
+    #     kit.motor1.throttle = throttle
+    # kit.motor1.throttle = 0
+    pid = PID(1, 0.1, 0.05, setpoint=1)
+    pid.sample_time = 0.01
+    pid.output_limits = (-1,1)
 
     while error > .5:
-        error = abs(read_angle() - port_location[port])
-        print("error: " + str(error))
-        throttle = (error * Kp) 
-        #+ (iError * Ki)
-        print("throttle: " + str(throttle))
-        if throttle > 1: throttle = 1
-        kit.motor1.throttle = throttle
+        # error = read_angle() - port_location[port]
+        # print("error: " + str(error))
+        output = pid(read_angle())
+        pid.setpoint(port_location[port])
+        kit.motor1.throttle = output
+
+        time.sleep(0.01)
+       
     kit.motor1.throttle = 0
 
 def fwd_pump():
