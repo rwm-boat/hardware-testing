@@ -57,7 +57,7 @@ def port_select(port):
         
         output = pid(read_angle())
         pid.setpoint = port_location[port]
-
+        print("throttle: " + output)
         kit.motor1.throttle = output
 
         time.sleep(0.01)
