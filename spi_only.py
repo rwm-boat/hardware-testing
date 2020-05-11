@@ -3,6 +3,11 @@ import time
 
 spi = spidev.SpiDev()
 
+spi.open(0, 0)
+spi.max_speed_hz = 100000
+spi.mode = 0b1
+spi.lsbfirst = False
+
 def read_angle():
     msg = [0b11111111, 0b11111111]
     reply = spi.xfer2(msg)
@@ -21,9 +26,6 @@ def read_angle():
     return adj_rotation
 
 while(True):
-    spi.open(0, 0)
-    spi.max_speed_hz = 100000
-    spi.mode = 0b1
-    spi.lsbfirst = False
+    
     read_angle()
     time.sleep(0.01)
