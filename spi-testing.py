@@ -51,11 +51,15 @@ def port_select(port):
     pid = PID(1/100, 0, 0, setpoint=1) 
     pid.sample_time = 0.01
     pid.output_limits = (-1,1)
-    prev_angle = 0
+
 
     while error > .5 or error < -0.5:
         angle = read_angle()
-        if(abs(angle - prev_angle) > 30): angle = prev_angle
+        try:
+            if(abs(angle - prev_angle) > 30): angle = prev_angle
+        except:
+            pass
+
         print(angle)
         if(angle < -180): angle = angle + 360
         elif(angle > 180): angle = angle - 360
