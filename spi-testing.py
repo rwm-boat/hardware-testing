@@ -2,7 +2,7 @@ import spidev
 import time
 from adafruit_motorkit import MotorKit
 import RPi.GPIO as GPIO
-from simple-pid import PID
+from simple_pid import PID
 
 kit = MotorKit()
 spi = spidev.SpiDev()
@@ -25,7 +25,7 @@ def read_angle():
     raw_rotation = (((left_byte & 0xFF) << 8) | ( right_byte & 0xFF)) & ~0xC000
     adj_rotation = raw_rotation / (0x3FFF/360)
 
-    print(adj_rotation)
+    print("raw angle: " + adj_rotation)
 
     return adj_rotation
 
@@ -34,7 +34,7 @@ def port_select(port):
     # [PURGE,ONE,...,NINE]
     port_location = [97,134,172,208,250,285,328,359,27,65]
     error = abs(read_angle() - (port_location[port]))
-    pid = PID(1, 0.1, 0.05, setpoint = 1)
+    #pid = PID(1, 0.1, 0.05, setpoint = 1)
     # global iError
     # iError = iError + error
     # Kp = 1/10
@@ -52,11 +52,12 @@ def port_select(port):
     pid.sample_time = 0.01
     pid.output_limits = (-1,1)
 
-    while error > .5:
-        # error = read_angle() - port_location[port]
-        # print("error: " + str(error))
+    while error > .5 or error < -0.5:
+        error = read_angle() - port_location[port]
+        
         output = pid(read_angle())
-        pid.setpoint(port_location[port])
+        pid.setpoint = port_location[port]
+
         kit.motor1.throttle = output
 
         time.sleep(0.01)
