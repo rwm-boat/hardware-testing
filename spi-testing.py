@@ -54,13 +54,18 @@ def port_select(port):
 
     while error > .5 or error < -0.5:
         angle = read_angle()
-        error = angle - port_location[port]
+       
+        if(angle < -180) anle = angle + 360
+        elif(angle > 180) angle = angle - 360
         
+        error = port_location[port] - angle
+
         output = pid(angle)
         pid.setpoint = port_location[port]
-        print("setpoint : " + str(port_location[port]))
+        # print("setpoint : " + str(port_location[port]))
         print("raw angle: " + str(angle))
-        print("throttle : " + str(output))
+        # print("corrected: " + str(corr_angle))
+        # print("throttle : " + str(output))
         kit.motor1.throttle = output
 
         time.sleep(0.01)
