@@ -1,7 +1,7 @@
 import spidev
 import time
 from adafruit_motorkit import MotorKit
-
+import RPi.GPIO as GPIO
 
 kit = MotorKit()
 spi = spidev.SpiDev()
@@ -31,8 +31,8 @@ def read_angle():
 def port_select(port):
 
     # [PURGE,ONE,...,NINE]
-    port_location = [99,134,172,208,250,285,328,359,27,65]
-    Kp = 1/20
+    port_location = [97,134,172,208,250,285,328,359,27,65]
+    Kp = 1/10
     Ki = 1/50
     error = abs(read_angle() - (port_location[port]))
     global iError
@@ -41,15 +41,16 @@ def port_select(port):
     while error > .5:
         error = abs(read_angle() - port_location[port])
         print("error: " + str(error))
-        throttle = (error * Kp) + (iError * Ki)
+        throttle = (error * Kp) 
+        #+ (iError * Ki)
         print("throttle: " + str(throttle))
         if throttle > 1: throttle = 1
         kit.motor1.throttle = throttle
     kit.motor1.throttle = 0
 
 def fwd_pump():
-   GPIO.output(23,GPIO.HIGH)
-   GPIO.output(24,GPIO.LOW)
+   GPIO.output(23,GPIO.LOW)
+   GPIO.output(24,GPIO.HIGH)
 def rev_pump():
    GPIO.output(24,GPIO.HIGH)
    GPIO.output(23,GPIO.LOW)
@@ -64,14 +65,17 @@ try:
     spi.lsbfirst = False
 
     port_select(0)
-    fwd_pump()
     time.sleep(5)
-    stop_pump()
-    port_select(2)
-    fwd_pump()
-    time.sleep(5)
-    stop_pump()
+    port_select(5)
+#    fwd_pump()
+ #   time.sleep(2)
+  #  stop_pump()
+   # port_select(2)
+    #fwd_pump()
+    #time.sleep(2)
+    #stop_pump()
 
 except KeyboardInterrupt:
     kit.motor1.throttle = 0
+    stop_pump()
 
